@@ -1,0 +1,536 @@
+/* ------------------------------------------------------------------ hero
+   The operation map: seven steps of one enquiry's life. They never move.
+   "Today" the pencil connects them; "built" the route re-wires them,
+   entering above the headline and leaving beneath the buttons. */
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+}
+.hero__inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  min-height: clamp(640px, calc(100svh - var(--header-h)), 900px);
+  padding-block: 5.5rem 7rem;
+}
+.hero__text {
+  width: min(52%, 44rem);
+}
+.hero__title {
+  color: var(--ink);
+}
+.hero__sub {
+  margin-top: clamp(1.5rem, 1rem + 1.4vw, 2.25rem);
+  max-width: 35rem;
+}
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2.25rem;
+}
+
+/* The subtitle is the largest text in view (the LCP element), so it is
+   painted straight away; only the buttons settle in. */
+.hero__actions {
+  animation: fade-rise 1s var(--ease-out) both;
+  animation-delay: 0.55s;
+}
+@keyframes fade-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+.hero[data-played="true"] :is(.hero__actions, .op-node, .op-toggle) {
+  animation: none;
+}
+
+/* ---------------------------------------------------- lines (SVG overlay) */
+
+.op-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  overflow: visible;
+}
+.op-sketch {
+  transition: opacity 0.7s var(--ease-out);
+}
+.op-sketch path {
+  fill: none;
+  stroke: #8f98ab;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1.25s var(--ease-in-out);
+  transition-delay: calc(var(--k) * 55ms);
+}
+.op-sketch path:nth-child(even) {
+  stroke-width: 1;
+  opacity: 0.6;
+}
+.op-lost {
+  font-family: var(--font-hand);
+  font-size: 26px;
+  fill: var(--pencil);
+  opacity: 0;
+  transition: opacity 0.5s var(--ease-out) 1.2s;
+}
+.op-lines[data-phase="today"] .op-sketch path,
+.op-lines[data-phase="built"] .op-sketch path {
+  stroke-dashoffset: 0;
+}
+.op-lines[data-phase="today"] .op-lost {
+  opacity: 1;
+}
+.op-lines[data-phase="built"] .op-sketch {
+  opacity: 0.1;
+}
+
+.op-route {
+  fill: none;
+  stroke: var(--electric);
+  stroke-width: 2.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.6s var(--ease-out);
+}
+.op-lines[data-phase="built"] .op-route {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1.8s var(--ease-in-out) 0.2s;
+}
+
+.op-token {
+  transition: opacity 0.2s linear;
+}
+.op-token__halo {
+  fill: var(--electric);
+  opacity: 0.16;
+}
+.op-token__core {
+  fill: var(--electric);
+  stroke: #fff;
+  stroke-width: 2;
+}
+
+/* ---------------------------------------------------- the steps */
+
+.op-map {
+  position: absolute;
+  z-index: 3;
+  top: 9%;
+  bottom: 12%;
+  left: 57%;
+  right: max(var(--gutter), calc((100% - var(--max)) / 2));
+}
+.op-figure {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+}
+.op-nodes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.op-node {
+  position: absolute;
+  left: calc(var(--x) * 1%);
+  top: calc(var(--y) * 1%);
+  transform: translate(-50%, -50%);
+  animation: op-pop 0.7s var(--ease-spring) both;
+  animation-delay: calc(var(--i) * 70ms + 250ms);
+}
+@keyframes op-pop {
+  from {
+    opacity: 0;
+    scale: 0.86;
+  }
+}
+
+/* Positions (percent of the map box) and how each segment arrives:
+   --in: h = horizontal first, v = vertical first. */
+.op-node[data-id="enquiry"] {
+  --x: 8;
+  --y: 0;
+}
+.op-node[data-id="quote"] {
+  --x: 56;
+  --y: 0;
+  --in: h;
+}
+.op-node[data-id="approval"] {
+  --x: 89;
+  --y: 26;
+  --in: h;
+}
+.op-node[data-id="order"] {
+  --x: 44;
+  --y: 26;
+  --in: h;
+}
+.op-node[data-id="dispatch"] {
+  --x: 16;
+  --y: 56;
+  --in: h;
+}
+.op-node[data-id="invoice"] {
+  --x: 66;
+  --y: 56;
+  --in: h;
+}
+.op-node[data-id="payment"] {
+  --x: 90;
+  --y: 88;
+  --in: h;
+}
+
+.op-node__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.6rem 0.95rem 0.5rem 0.75rem;
+  background: #fff;
+  border: 1.5px solid var(--pencil-2);
+  border-radius: 12px;
+  font-weight: 400;
+  font-size: 0.975rem;
+  line-height: 1;
+  color: var(--ink);
+  white-space: nowrap;
+  transition:
+    border-color 0.45s var(--ease-out),
+    box-shadow 0.45s var(--ease-out),
+    transform 0.45s var(--ease-spring);
+}
+.op-node__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  border: 1.5px dashed var(--pencil);
+  background: #fff;
+  transition:
+    background-color 0.45s var(--ease-out),
+    border-color 0.45s var(--ease-out),
+    transform 0.45s var(--ease-spring);
+}
+.op-node__note {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  left: 50%;
+  width: max-content;
+  max-width: 12rem;
+  translate: -50% 0;
+  rotate: -2.5deg;
+  font-family: var(--font-hand);
+  font-weight: 400;
+  font-size: 1.1rem;
+  line-height: 1.15;
+  text-align: center;
+  color: var(--ink-3);
+  transition:
+    opacity 0.45s var(--ease-out),
+    translate 0.45s var(--ease-out);
+}
+
+.op-map[data-phase="init"] .op-node__note {
+  opacity: 0;
+}
+.op-map[data-phase="built"] .op-node__chip {
+  border-color: var(--electric);
+  box-shadow: 0 10px 26px -16px rgb(35 80 255 / 0.65);
+  transition-delay: var(--lock);
+}
+.op-map[data-phase="built"] .op-node__dot {
+  background: var(--electric);
+  border: 1.5px solid var(--electric);
+  transform: scale(1.15);
+  transition-delay: var(--lock);
+}
+.op-map[data-phase="built"] .op-node__note {
+  opacity: 0;
+  translate: -50% -4px;
+}
+/* What replaces the workaround, written in once the route reaches the step. */
+.op-map[data-phase="built"] .op-node__now {
+  opacity: 1;
+  translate: var(--now-x, -50%) 0;
+  transition-delay: calc(var(--lock) + 0.15s);
+}
+.op-node:hover .op-node__chip {
+  transform: translateY(-2px);
+}
+
+/* ---------------------------------------------------- toggle */
+
+.op-toggle {
+  position: absolute;
+  left: -2%;
+  top: 88%;
+  translate: 0 -50%;
+  display: inline-flex;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--mist);
+  border: 1px solid var(--rule);
+  animation: fade-rise 0.8s var(--ease-out) 1s both;
+}
+.op-toggle button {
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--ink-2);
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.6rem 0.9rem 0.55rem;
+  cursor: var(--cursor-hand);
+  transition:
+    background-color 0.3s var(--ease-out),
+    color 0.3s var(--ease-out),
+    box-shadow 0.3s var(--ease-out);
+}
+.op-toggle button:hover {
+  color: var(--ink);
+}
+.op-toggle button[aria-pressed="true"] {
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 1px 2px rgb(12 19 34 / 0.12);
+}
+.op-toggle button:first-child[aria-pressed="true"] {
+  color: var(--ink-2);
+}
+.op-toggle button:last-child[aria-pressed="true"] {
+  color: var(--electric);
+}
+
+/* ---------------------------------------------------- stacked (tablet + mobile) */
+
+@media (max-width: 1199px) {
+  .hero__inner {
+    min-height: 0;
+    padding-block: 3.5rem 2rem;
+  }
+  .hero__text {
+    width: 100%;
+    max-width: 44rem;
+  }
+  .op-map {
+    position: relative;
+    top: auto;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    width: 100%;
+    max-width: calc(var(--max) + var(--gutter) * 2);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+    height: clamp(380px, 52vw, 470px);
+    margin-bottom: 5.5rem;
+  }
+  .op-figure {
+    inset: 0 var(--gutter);
+  }
+  .op-map {
+    margin-top: 3.75rem;
+  }
+  .op-toggle {
+    left: var(--gutter);
+    top: -3.25rem;
+    translate: none;
+  }
+  .op-node[data-id="enquiry"] {
+    --x: 9;
+    --y: 6;
+  }
+  .op-node[data-id="quote"] {
+    --x: 46;
+    --y: 6;
+  }
+  .op-node[data-id="approval"] {
+    --x: 86;
+    --y: 6;
+  }
+  .op-node[data-id="order"] {
+    --x: 86;
+    --y: 46;
+    --in: v;
+  }
+  .op-node[data-id="dispatch"] {
+    --x: 46;
+    --y: 46;
+  }
+  .op-node[data-id="invoice"] {
+    --x: 11;
+    --y: 46;
+  }
+  .op-node[data-id="payment"] {
+    --x: 40;
+    --y: 86;
+    --in: v;
+  }
+}
+
+/* Where the route leaves a step straight down, its label sits beside the line. */
+.op-node {
+  --beside-left: calc(50% - 12px);
+  --beside-right: calc(50% + 12px);
+}
+@media (min-width: 640px) and (max-width: 1199px) {
+  .op-node[data-id="approval"] {
+    --now-left: var(--beside-left);
+    --now-x: -100%;
+    --now-align: right;
+  }
+  .op-node[data-id="invoice"] {
+    --now-left: var(--beside-right);
+    --now-x: 0%;
+    --now-align: left;
+  }
+}
+/* Too narrow for side labels: these go above their step instead. */
+@media (max-width: 639px) {
+  .op-node[data-id="quote"],
+  .op-node[data-id="order"],
+  .op-node[data-id="invoice"] {
+    --now-top: auto;
+    --now-bottom: calc(100% + 0.4rem);
+  }
+}
+
+@media (max-width: 639px) {
+  .op-map {
+    height: 500px;
+  }
+  .op-toggle {
+    right: var(--gutter);
+    display: flex;
+  }
+  .op-toggle button {
+    flex: 1;
+  }
+  .op-node__chip {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem 0.42rem 0.6rem;
+  }
+  .op-node__note {
+    font-size: 1rem;
+    max-width: 8.5rem;
+  }
+  .op-node[data-id="enquiry"] {
+    --x: 22;
+    --y: 8;
+  }
+  .op-node[data-id="quote"] {
+    --x: 76;
+    --y: 8;
+  }
+  .op-node[data-id="approval"] {
+    --x: 76;
+    --y: 33;
+    --in: v;
+  }
+  .op-node[data-id="order"] {
+    --x: 24;
+    --y: 33;
+    --in: h;
+  }
+  .op-node[data-id="dispatch"] {
+    --x: 24;
+    --y: 58;
+    --in: v;
+  }
+  .op-node[data-id="invoice"] {
+    --x: 76;
+    --y: 58;
+    --in: h;
+  }
+  .op-node[data-id="payment"] {
+    --x: 76;
+    --y: 83;
+    --in: v;
+  }
+}
+
+/* "follow the enquiry": a pencil note beside where the route leaves the hero */
+.hero__cue {
+  position: absolute;
+  z-index: 3;
+  left: calc(max(var(--gutter), (100% - var(--max)) / 2) / 2 + 16px);
+  bottom: 1.25rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.35rem;
+  font-size: 0.95rem;
+  color: var(--ink-3);
+  animation: fade-only 0.8s var(--ease-out) 3.6s both;
+  pointer-events: none;
+}
+.hero__cue svg {
+  width: 18px;
+  height: 30px;
+  overflow: visible;
+}
+.hero__cue path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+[data-motion="full"] .hero__cue svg {
+  animation: cue-bob 2.4s var(--ease-in-out) infinite;
+}
+@keyframes cue-bob {
+  50% {
+    transform: translateY(5px);
+  }
+}
+.op-map,
+.op-lines {
+  transition: translate 0.6s var(--ease-out);
+}
+@media (max-width: 1199px) {
+  .hero__cue {
+    bottom: 0.75rem;
+  }
+}
+
+/* What replaces the workaround, written in once the route reaches the step. */
+.op-node__now {
+  position: absolute;
+  top: var(--now-top, calc(100% + 0.45rem));
+  bottom: var(--now-bottom, auto);
+  left: var(--now-left, 50%);
+  width: max-content;
+  max-width: 11rem;
+  translate: var(--now-x, -50%) 4px;
+  font-size: 0.85rem;
+  font-weight: 400;
+  line-height: 1.2;
+  text-align: var(--now-align, center);
+  color: var(--electric-ink);
+  opacity: 0;
+  transition:
+    opacity 0.35s var(--ease-out),
+    translate 0.35s var(--ease-out);
+}
+@media (max-width: 639px) {
+  .op-node__now {
+    font-size: 0.78rem;
+    max-width: 8.5rem;
+  }
+}

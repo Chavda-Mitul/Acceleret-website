@@ -1,0 +1,112 @@
+/* ------------------------------------------------------------------ art
+   Pencil drawings made in code (lib/sketch, components/art). Each layer is
+   one path that draws itself stroke by stroke once the drawing is in view. */
+
+.art {
+  margin: 0;
+}
+.art svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+/* the space a drawing will take, held until it loads */
+.art__space {
+  aspect-ratio: var(--ratio);
+}
+.art path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.art .art__paper {
+  fill: var(--paper);
+  stroke: none;
+  stroke-dasharray: none;
+  stroke-dashoffset: 0;
+}
+.art__faint {
+  stroke: #d4d9e2;
+  stroke-width: 0.9;
+}
+.art__hatch {
+  stroke: #a9b1c0;
+  stroke-width: 0.7;
+}
+.art__line {
+  stroke: #808a9d;
+  stroke-width: 1;
+}
+.art__ink {
+  stroke: #3b4356;
+  stroke-width: 1.35;
+}
+.art__blue {
+  stroke: var(--electric);
+  stroke-width: 2.2;
+}
+.art__node {
+  fill: var(--electric);
+  stroke: #fff;
+  stroke-width: 2;
+  opacity: 0;
+  scale: 0.3;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.art[data-inview="true"] path {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset var(--dur, 3s) var(--ease-in-out) var(--delay, 0s);
+}
+.art[data-inview="true"] .art__faint {
+  --dur: 2.6s;
+  --delay: 0s;
+}
+.art[data-inview="true"] .art__ink {
+  --dur: 4.6s;
+  --delay: 0.2s;
+}
+.art[data-inview="true"] .art__line {
+  --dur: 4.4s;
+  --delay: 1.1s;
+}
+.art[data-inview="true"] .art__hatch {
+  --dur: 3.6s;
+  --delay: 2.4s;
+}
+.art[data-inview="true"] .art__blue {
+  --dur: 2.2s;
+  --delay: 4.8s;
+}
+.art[data-inview="true"] .art__node {
+  opacity: 1;
+  scale: 1;
+  transition:
+    opacity 0.3s var(--ease-out),
+    scale 0.55s var(--ease-spring);
+  transition-delay: calc(5.8s + var(--n) * 0.14s);
+}
+.no-js .art path {
+  stroke-dashoffset: 0;
+}
+.no-js .art__node {
+  opacity: 1;
+  scale: 1;
+}
+
+/* the street, between the tagline and the services */
+.art-street {
+  overflow: hidden;
+  padding-block: clamp(1rem, 3vw, 3rem) clamp(2.5rem, 5vw, 5rem);
+}
+@media (max-width: 760px) {
+  .art--street svg,
+  .art--street .art__space {
+    width: 100%;
+    height: 320px;
+    aspect-ratio: auto;
+  }
+}
