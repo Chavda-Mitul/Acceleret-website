@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { hero } from "@/content/home";
 import { site } from "@/content/site";
-import { OperationMap } from "./OperationMap";
+import { HeroSystems } from "./HeroSystems";
 import { SplitHeading } from "@/components/motion/SplitHeading";
 import { Note } from "@/components/Note";
 
@@ -28,9 +28,9 @@ export function Hero() {
           </div>
         </div>
       </div>
-      <OperationMap />
+      <HeroSystems />
       <p className="hero__cue" aria-hidden>
-        follow the enquiry
+        follow the line
         <svg viewBox="0 0 24 40" focusable={false}>
           <path d="M12 2 C 10 14, 14 22, 12 34 M6 28 L12 35 L18 28" />
         </svg>

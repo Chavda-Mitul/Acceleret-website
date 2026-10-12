@@ -2,28 +2,15 @@
 
 export const hero = {
   headline: "Software built around how your business works.",
-  /** Shortened at the client's request (less text on screen). The brief's full line is `subFull`. */
-  sub: "At Acceleret, software starts with understanding. Our engineers embed with your team, map your operations and build around them.",
+  /**
+   * Shortened at the client's request (less text on screen), and names the range
+   * so the hero doesn't read as CRM-only. The brief's full line is `subFull`.
+   */
+  sub: "Our engineers embed with your team, map how it works and build whatever it needs: CRM, ERP, apps, AI, automation. Any industry, any stack.",
   subFull:
     "At Acceleret, software starts with understanding. Our engineers embed with your team, map your operations and build around them — AI-driven CRM and ERP systems, web portals, apps and workflow automation designed for how your business works, not how a template assumes it does.",
   secondaryCta: { label: "See how we work", href: "/how-we-work" },
 };
-
-/**
- * Design copy for the hero diagram: one enquiry's path through a business.
- * `today` is the workaround each step depends on now (pencil); `built` is
- * what replaces it, drawn from the service examples in the brief.
- * Illustrative, not a claim about a specific client.
- */
-export const operationSteps = [
-  { id: "enquiry", label: "Enquiry", today: "arrives on WhatsApp", built: "captured from WhatsApp" },
-  { id: "quote", label: "Quote", today: "typed up in Excel", built: "tracked to follow-up" },
-  { id: "approval", label: "Approval", today: "a voice note, maybe", built: "moves without chasing" },
-  { id: "order", label: "Order", today: "retyped into the sheet", built: "entered once" },
-  { id: "dispatch", label: "Dispatch", today: "“did you send that?”", built: "status the customer sees" },
-  { id: "invoice", label: "Invoice", today: "made from memory", built: "generated from the order" },
-  { id: "payment", label: "Payment", today: "chased by phone", built: "synced with accounts" },
-] as const;
 
 export const problem = {
   heading: "Most businesses run on three things.",
