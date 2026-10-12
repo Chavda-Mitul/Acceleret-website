@@ -64,24 +64,30 @@
   will-change: transform;
 }
 
-/* WhatsApp pile */
+/* WhatsApp pile. The stage has a fixed height (it shrinks with the window
+   when pinned), so the chat is sized in em off a font size that scales with
+   that height: all seven bubbles always fit above the "WhatsApp" heading. */
+.pcol--wa .pcol__stage {
+  container-type: size;
+}
 .wa-list {
   list-style: none;
   margin: 0;
-  padding: 1.4rem 0 0;
+  padding: 1.7em 0 0;
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
+  gap: 0.5em;
+  font-size: min(0.84rem, 4.6cqh);
 }
 .bubble {
   position: relative;
   align-self: flex-start;
   max-width: 86%;
-  padding: 0.45rem 0.7rem 0.4rem;
+  padding: 0.5em 0.83em 0.45em;
   border-radius: 14px 14px 14px 4px;
   background: #fff;
   border: 1px solid var(--rule);
-  font-size: 0.84rem;
+  font-size: 1em;
   line-height: 1.3;
   box-shadow: 0 6px 16px -12px rgb(12 19 34 / 0.35);
 }
@@ -106,8 +112,8 @@
 }
 .bubble__wave {
   display: block;
-  width: 84px;
-  height: 14px;
+  width: 6.25em;
+  height: 1.05em;
   background: repeating-linear-gradient(90deg, var(--ink-3) 0 2px, transparent 2px 5px);
   mask-image: linear-gradient(to bottom, transparent 20%, #000 20% 80%, transparent 80%);
   opacity: 0.6;
@@ -405,6 +411,10 @@ html:not(.no-js) .pscene__closing .sw {
 .pscene.is-pinned .note {
   rotate: none;
 }
+/* no box drawn around the piles when pinned: the chat can use the full height */
+.pscene.is-pinned .pcol--wa .pcol__stage {
+  padding-block: 0;
+}
 .pscene.is-pinned .pscene__finale {
   position: absolute;
   left: var(--gutter);
@@ -426,6 +436,13 @@ html:not(.no-js) .pscene__closing .sw {
   .pcol__stage {
     height: auto;
     min-height: 220px;
+  }
+  /* stacked: the stage grows with its content, so the chat keeps its size */
+  .pcol--wa .pcol__stage {
+    container-type: normal;
+  }
+  .wa-list {
+    font-size: 0.84rem;
   }
 }
 
