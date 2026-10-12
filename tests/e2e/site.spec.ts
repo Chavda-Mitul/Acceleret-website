@@ -105,8 +105,7 @@ test("reduced motion shows the finished drawings", async ({ browser }) => {
   const ctx = await browser.newContext({ reducedMotion: "reduce", viewport: { width: 1440, height: 900 } });
   const page = await ctx.newPage();
   await page.goto("/");
-  await expect(page.locator(".op-map")).toHaveAttribute("data-phase", "built");
-  await expect(page.getByRole("button", { name: "Built around it" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator(".hs-map")).toHaveAttribute("data-phase", "built");
   await ctx.close();
 });
 
@@ -153,10 +152,11 @@ test("pressing turns the arrow into a pencil that draws, and scrolling rubs it o
   await expect(layer).toBeHidden();
 });
 
-test("hero toggle switches between today and built", async ({ page }) => {
+test("hero sketches every kind of software, then builds it", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "How it runs today" }).click();
-  await expect(page.locator(".op-map")).toHaveAttribute("data-phase", "today");
-  await page.getByRole("button", { name: "Built around it" }).click();
-  await expect(page.locator(".op-map")).toHaveAttribute("data-phase", "built");
+  const map = page.locator(".hs-map");
+  await expect(map).toHaveAttribute("data-phase", "sketch");
+  await expect(map).toHaveAttribute("data-phase", "built");
+  await expect(page.locator(".hs-obj")).toHaveCount(7);
+  await expect(page.locator(".hs-obj__label").filter({ hasText: "CRM" })).toBeVisible();
 });

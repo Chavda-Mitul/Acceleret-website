@@ -357,10 +357,11 @@ svg {
 [data-motion="calm"] .rise {
   transform: none;
 }
-[data-motion="calm"] .op-node,
-[data-motion="calm"] .hero__actions,
-[data-motion="calm"] .op-toggle {
+[data-motion="calm"] .hero__actions {
   animation-name: fade-only;
+}
+[data-motion="calm"] .hs-built {
+  scale: none;
 }
 [data-motion="calm"] .mobile-menu,
 [data-motion="calm"] .mobile-menu__nav li {

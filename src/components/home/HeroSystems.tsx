@@ -1,56 +1,29 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
-import { operationSteps } from "@/content/home";
-import {
-  cumulative,
-  dedupe,
-  orthoWaypoints,
-  roundedPath,
-  scribbleLoop,
-  seeded,
-  sketchCurve,
-  type Axis,
-  type Pt,
-} from "@/lib/geometry";
+import { heroObjects } from "./heroArt";
+import { cumulative, dedupe, orthoWaypoints, roundedPath, type Axis, type Pt } from "@/lib/geometry";
 import { useMotionMode } from "@/lib/motion";
 import { subscribeScroll } from "@/lib/scroll";
 
-type Phase = "init" | "today" | "built";
+/** "sketch": the pencil draws every kind of software; "built": the route connects them and they ink in. */
+type Phase = "init" | "sketch" | "built";
 
 type Geometry = {
   w: number;
   h: number;
   route: string;
-  /** Seconds after the route starts drawing that it reaches each step. */
-  locks: Record<string, number>;
-  sketches: string[];
-  lost: Pt;
+  /** Seconds after the route starts drawing that it reaches each drawing. */
+  locks: number[];
 };
 
-const ROUTE_DRAW = 1.8; // seconds, matches .op-route in hero.css
+const ROUTE_DRAW = 1.8; // seconds, matches .hs-route in hero.css
 const ROUTE_DELAY = 0.2;
-
-/** Pairs of steps the pencil connects "today": out of order, doubled back, skipped. */
-const SKETCH_PAIRS: [string, string][] = [
-  ["start", "enquiry"],
-  ["enquiry", "quote"],
-  ["enquiry", "order"],
-  ["quote", "approval"],
-  ["approval", "quote"],
-  ["quote", "order"],
-  ["order", "dispatch"],
-  ["dispatch", "enquiry"],
-  ["order", "invoice"],
-  ["dispatch", "invoice"],
-  ["invoice", "payment"],
-  ["payment", "lost"],
-];
 
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 /* cubic-bezier(0.65, 0, 0.35, 1), the site's drawing ease, inverted numerically
-   so a step lights up exactly when the drawn line reaches it. */
+   so a drawing inks in exactly when the line reaches it. */
 function bezier(t: number, p1: number, p2: number) {
   const u = 1 - t;
   return 3 * u * u * t * p1 + 3 * u * t * t * p2 + t * t * t;
@@ -69,7 +42,15 @@ function easeDrawInverse(progress: number) {
   return bezier((lo + hi) / 2, 0.65, 0.35);
 }
 
-export function OperationMap() {
+/**
+ * The hero drawing: six kinds of software a business runs on — an app,
+ * dashboards, a CRM, automation, AI, integrations — sketched in pencil one
+ * after another. Then one engineered line runs through all of them and each
+ * inks in as it's reached: one system, whatever it needs to be. The last
+ * frame stays a sketch ("yours next"), and the line leaves past it, down the
+ * page, where scrolling carries the dot.
+ */
+export function HeroSystems() {
   const mapRef = useRef<HTMLDivElement>(null);
   const routeRef = useRef<SVGPathElement>(null);
   const tokenRef = useRef<SVGGElement>(null);
@@ -77,11 +58,6 @@ export function OperationMap() {
   const played = useRef(false);
   const [phase, setPhase] = useState<Phase>("init");
   const [geo, setGeo] = useState<Geometry | null>(null);
-
-  const clearTimers = () => {
-    timers.current.forEach((t) => window.clearTimeout(t));
-    timers.current = [];
-  };
 
   /* ---------------------------------------------------------- measure */
   const measure = useCallback(() => {
@@ -94,45 +70,41 @@ export function OperationMap() {
     const tr = text.getBoundingClientRect();
     const wide = window.matchMedia("(min-width: 1200px)").matches; // matches hero.css
 
-    const pts: Record<string, Pt> = {};
-    const halfW: Record<string, number> = {};
+    const pts: Pt[] = [];
+    const halfW: number[] = [];
     const axes: Axis[] = [];
-    map.querySelectorAll<HTMLElement>(".op-node").forEach((n) => {
-      const chip = n.querySelector<HTMLElement>(".op-node__chip");
-      if (!chip) return;
-      const c = chip.getBoundingClientRect();
-      pts[n.dataset.id!] = { x: c.left + c.width / 2 - hr.left, y: c.top + c.height / 2 - hr.top };
-      // the wider of the chip and its label, so lines leaving a step clear both
-      const label = n.querySelector<HTMLElement>(".op-node__now")?.getBoundingClientRect().width ?? 0;
-      halfW[n.dataset.id!] = Math.max(c.width, label) / 2;
+    map.querySelectorAll<HTMLElement>(".hs-obj").forEach((n) => {
+      const art = n.querySelector<HTMLElement>(".hs-obj__art");
+      if (!art) return;
+      const c = art.getBoundingClientRect();
+      pts.push({ x: c.left + c.width / 2 - hr.left, y: c.top + c.height / 2 - hr.top });
+      const label = n.querySelector<HTMLElement>(".hs-obj__label")?.getBoundingClientRect().width ?? 0;
+      halfW.push(Math.max(c.width, label) / 2);
       axes.push((getComputedStyle(n).getPropertyValue("--in").trim() || "h") as Axis);
     });
-    const ordered = operationSteps.map((s) => pts[s.id]).filter(Boolean);
-    if (ordered.length !== operationSteps.length) return;
+    if (pts.length !== heroObjects.length) return;
 
-    const first = ordered[0];
-    const last = ordered[ordered.length - 1];
+    const first = pts[0];
+    const last = pts[pts.length - 1];
     const textTop = tr.top - hr.top;
     const textBottom = tr.bottom - hr.top;
-    // The spine: the route leaves the hero down the page margin, half the
+    // The spine: the line leaves the hero down the page margin, half the
     // content's left offset, where the next sections pick it up (.spine).
     const spineX = Math.round((tr.left - hr.left) / 2);
 
-    // The engineered route enters above the headline, runs through every step
-    // in order, then returns beneath the buttons: built around the words.
+    // It enters above the headline, runs through every drawing in order,
+    // then returns beneath the buttons: built around the words.
     const entryY = wide ? (first.y <= textTop - 20 ? first.y : textTop - 40) : first.y;
     const start: Pt = { x: -12, y: entryY };
-    const exitY = wide ? Math.max(last.y + 48, textBottom + 56) : last.y + 48;
+    const exitY = wide ? Math.max(last.y + 72, textBottom + 56) : last.y + 72;
 
     const head: Pt[] = [start];
     if (entryY !== first.y) head.push({ x: first.x, y: entryY });
-    const through = orthoWaypoints(ordered, axes);
-    // Leave the last step from a side, so the line clears the label beneath it:
-    // the side opposite to where the route came in (left when it came from above).
+    const through = orthoWaypoints(pts, axes);
+    // Leave the last frame from a side, away from where the line came in.
     const before = through.pts[through.pts.length - 2];
     const fromLeft = Math.abs(before.y - last.y) < 1 && before.x < last.x;
-    const lastHalf = halfW[operationSteps[operationSteps.length - 1].id];
-    const sideX = fromLeft ? last.x + lastHalf + 14 : last.x - lastHalf - 14;
+    const sideX = fromLeft ? last.x + halfW[halfW.length - 1] + 14 : last.x - halfW[halfW.length - 1] - 14;
     const tail: Pt[] = [
       { x: sideX, y: last.y },
       { x: sideX, y: exitY },
@@ -142,30 +114,9 @@ export function OperationMap() {
     const raw = [...head, ...through.pts, ...tail];
     const lens = cumulative(raw);
     const total = lens[lens.length - 1];
+    const locks = pts.map((_, i) => ROUTE_DELAY + ROUTE_DRAW * easeDrawInverse(lens[head.length + through.nodeIndex[i]] / total));
 
-    const locks: Record<string, number> = {};
-    operationSteps.forEach((s, i) => {
-      const f = lens[head.length + through.nodeIndex[i]] / total;
-      locks[s.id] = ROUTE_DELAY + ROUTE_DRAW * easeDrawInverse(f);
-    });
-
-    const rnd = seeded(20261114);
-    const named: Record<string, Pt> = {
-      ...pts,
-      start: { x: wide ? tr.left - hr.left - 4 : 0, y: entryY },
-      lost: { x: last.x - 84, y: last.y + 70 },
-    };
-    const sketches: string[] = [];
-    SKETCH_PAIRS.forEach(([a, b], i) => {
-      const bend = a === "start" ? 0.06 : i % 3 === 0 ? 0.42 : 0.3;
-      sketches.push(sketchCurve(named[a], named[b], rnd, bend));
-      // a second, lighter pass, like a pencil going over a line twice
-      if (i % 2 === 0) sketches.push(sketchCurve(named[a], named[b], rnd, bend * 0.8));
-    });
-    sketches.push(scribbleLoop(pts.approval, 58, 24, rnd));
-    sketches.push(scribbleLoop(pts.invoice, 50, 22, rnd));
-
-    setGeo({ w: hr.width, h: hr.height, route: roundedPath(dedupe(raw), 26), locks, sketches, lost: named.lost });
+    setGeo({ w: hr.width, h: hr.height, route: roundedPath(dedupe(raw), 26), locks });
   }, []);
 
   useEffect(() => {
@@ -190,23 +141,23 @@ export function OperationMap() {
   }, [measure]);
 
   /* ---------------------------------------------------------- sequence
-     Plays once: the pencil draws how the business runs today, then the
-     engineered route redraws it. Returning to the page shows the result. */
+     Plays once: the pencil sketches every drawing, then the line connects
+     them and they ink in. Returning to the page shows the result. */
   const ready = geo !== null;
   useEffect(() => {
     if (!ready || played.current) return;
-    const done = () => {
-      played.current = true;
-    };
-    // Calm motion plays this too: lines draw and steps light up, nothing travels.
-    timers.current.push(window.setTimeout(() => setPhase("today"), 350));
+    // Calm motion plays this too: lines draw and drawings ink in, nothing travels.
+    timers.current.push(window.setTimeout(() => setPhase("sketch"), 250));
     timers.current.push(
       window.setTimeout(() => {
         setPhase("built");
-        done();
+        played.current = true;
       }, 2700),
     );
-    return clearTimers;
+    return () => {
+      timers.current.forEach((t) => window.clearTimeout(t));
+      timers.current = [];
+    };
   }, [ready]);
 
   // When the page is hidden (navigating away keeps it mounted), mark the intro
@@ -217,13 +168,7 @@ export function OperationMap() {
     return () => hero?.setAttribute("data-played", "true");
   }, []);
 
-  const choose = (next: "today" | "built") => {
-    clearTimers();
-    played.current = true;
-    setPhase(next);
-  };
-
-  /* ---------------------------------------------------------- the enquiry travelling */
+  /* ---------------------------------------------------------- the dot travelling */
   const motion = useMotionMode();
   useEffect(() => {
     if (phase !== "built" || !geo || motion === "calm") return;
@@ -232,13 +177,13 @@ export function OperationMap() {
     const hero = mapRef.current?.closest<HTMLElement>(".hero");
     if (!path || !token || !hero) return;
 
-    // Once the route is drawn, the enquiry runs it, rests, and runs it again.
+    // Once the line is drawn, the dot runs it, rests, and runs it again.
     let visible = true;
     const io = new IntersectionObserver(([e]) => (visible = e.isIntersecting));
     io.observe(hero);
 
     const total = path.getTotalLength();
-    const travel = 3400;
+    const travel = 3800;
     const rest = 4200;
     const waits: number[] = [];
     let raf = 0;
@@ -270,8 +215,8 @@ export function OperationMap() {
     };
     loop(firstDelay);
 
-    // As the hero scrolls away, the scroll itself carries the enquiry along
-    // the route and out down the margin, into the rest of the page.
+    // As the hero scrolls away, the scroll itself carries the dot along the
+    // line and out down the margin, into the rest of the page.
     const unsubscribe = subscribeScroll(hero, (rect) => {
       const p = Math.min(1, Math.max(0, -rect.top / (rect.height * 0.8)));
       if (p > 0.01) {
@@ -289,9 +234,9 @@ export function OperationMap() {
       }
     });
 
-    // The map leans a little towards the pointer (lines and steps move together).
+    // The drawing leans a little towards the pointer (lines and drawings move together).
     const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-    const layers = [hero.querySelector<HTMLElement>(".op-map"), hero.querySelector<SVGElement>(".op-lines")];
+    const layers = [hero.querySelector<HTMLElement>(".hs-map"), hero.querySelector<SVGElement>(".hs-lines")];
     let px = 0;
     let py = 0;
     let lean = 0;
@@ -321,7 +266,7 @@ export function OperationMap() {
   return (
     <>
       <svg
-        className="op-lines"
+        className="hs-lines"
         aria-hidden
         focusable={false}
         viewBox={geo ? `0 0 ${geo.w} ${geo.h}` : undefined}
@@ -329,59 +274,47 @@ export function OperationMap() {
       >
         {geo ? (
           <>
-            <g className="op-sketch">
-              {geo.sketches.map((d, i) => (
-                <path key={i} d={d} pathLength={1} style={{ "--k": i } as CSSProperties} />
-              ))}
-              <text x={geo.lost.x - 18} y={geo.lost.y + 12} className="op-lost">
-                ?
-              </text>
-            </g>
-            <path ref={routeRef} className="op-route" d={geo.route} pathLength={1} />
-            <g ref={tokenRef} className="op-token" style={{ opacity: 0 }}>
-              <circle r="11" className="op-token__halo" />
-              <circle r="4.5" className="op-token__core" />
+            <path ref={routeRef} className="hs-route" d={geo.route} pathLength={1} />
+            <g ref={tokenRef} className="hs-token" style={{ opacity: 0 }}>
+              <circle r="11" className="hs-token__halo" />
+              <circle r="4.5" className="hs-token__core" />
             </g>
           </>
         ) : null}
       </svg>
 
-      <div className="op-map" ref={mapRef} data-phase={phase}>
-        <figure className="op-figure">
+      <div className="hs-map" ref={mapRef} data-phase={phase}>
+        <figure className="hs-figure">
           <figcaption className="sr-only">
-            Diagram: one enquiry&apos;s path through a business — enquiry, quote, approval, order, dispatch, invoice,
-            payment. Today the steps are held together by WhatsApp, spreadsheets and memory; built around them, one
-            connected system carries the enquiry through every step: captured from WhatsApp, tracked to follow-up,
-            approved without chasing, entered once, with status the customer sees, invoices generated from the order and
-            payments synced with accounts.
+            Drawing: the kinds of software we build — mobile apps, dashboards, CRM, workflow automation, AI that reads
+            documents and integrations between systems — sketched in pencil, then connected by one line into a single
+            system. A last, empty frame is left for whatever your business needs next.
           </figcaption>
-          <ol className="op-nodes" aria-hidden>
-            {operationSteps.map((s, i) => (
+          <ol className="hs-objs" aria-hidden>
+            {heroObjects.map((o, i) => (
               <li
-                key={s.id}
-                className="op-node"
-                data-id={s.id}
-                style={{ "--i": i, "--lock": `${geo?.locks[s.id] ?? 0}s` } as CSSProperties}
+                key={o.id}
+                className={`hs-obj${o.open ? " hs-obj--open" : ""}`}
+                data-slot={i}
+                style={{ "--i": i, "--w": o.w, "--lock": `${geo?.locks[i] ?? 0}s` } as CSSProperties}
               >
-                <span className="op-node__chip">
-                  <span className="op-node__dot" />
-                  {s.label}
-                </span>
-                <span className="op-node__note">{s.today}</span>
-                <span className="op-node__now">{s.built}</span>
+                <svg className="hs-obj__art" viewBox={`-6 -6 ${o.w + 12} ${o.h + 12}`} focusable={false}>
+                  {o.open ? <rect x={4} y={4} width={o.w - 8} height={o.h - 8} className="hs-paper" /> : null}
+                  <path d={o.line} pathLength={1} className="hs-pen hs-pen--line" />
+                  <path d={o.ink} pathLength={1} className="hs-pen hs-pen--ink" />
+                  {o.open ? (
+                    <text x={o.w / 2} y={o.h / 2 + 15} className="hs-ask">
+                      ?
+                    </text>
+                  ) : (
+                    <g className="hs-built">{o.built}</g>
+                  )}
+                </svg>
+                <span className="hs-obj__label">{o.label}</span>
               </li>
             ))}
           </ol>
         </figure>
-
-        <div className="op-toggle" role="group" aria-label="Show the operation">
-          <button type="button" aria-pressed={phase === "today"} onClick={() => choose("today")}>
-            How it runs today
-          </button>
-          <button type="button" aria-pressed={phase === "built"} onClick={() => choose("built")}>
-            Built around it
-          </button>
-        </div>
       </div>
     </>
   );
