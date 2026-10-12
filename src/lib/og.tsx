@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { LOGO_BLUE, LOGO_H, LOGO_INK, LOGO_MARK, LOGO_W, LOGO_WORD } from "@/components/chrome/logoPaths";
 
 export const ogSize = { width: 1200, height: 630 };
 export const ogContentType = "image/png";
@@ -6,7 +7,6 @@ export const ogContentType = "image/png";
 /**
  * Open Graph image for a page (brief §6): the page's line in large type,
  * with the site's route running around it and ending at a node.
- * Brand kit pending — swap colours/logo here when it arrives.
  */
 export function ogImage(title: string, kicker = "acceleret.com") {
   return new ImageResponse(
@@ -36,25 +36,10 @@ export function ogImage(title: string, kicker = "acceleret.com") {
           <circle cx="600" cy="510" r="13" fill="#2350ff" />
           <circle cx="600" cy="510" r="24" fill="#2350ff" opacity="0.16" />
         </svg>
-        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-          <div
-            style={{
-              width: 56,
-              height: 56,
-              borderRadius: 16,
-              background: "#0a2163",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <svg width="40" height="40" viewBox="0 0 32 32">
-              <path d="M9.5 9.5 16.5 16l-7 6.5" fill="none" stroke="#fff" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
-              <circle cx="22.5" cy="16" r="2.8" fill="#a8bcff" />
-            </svg>
-          </div>
-          <div style={{ fontSize: 38, fontWeight: 700, color: "#0a2163", letterSpacing: -1 }}>Acceleret</div>
-        </div>
+        <svg width={259} height={48} viewBox={`0 0 ${LOGO_W} ${LOGO_H}`}>
+          <path fill={LOGO_INK} d={LOGO_WORD} />
+          <path fill={LOGO_BLUE} d={LOGO_MARK} />
+        </svg>
         <div
           style={{
             display: "flex",

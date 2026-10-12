@@ -5,7 +5,7 @@ import { Logo } from "./Logo";
 import { InstagramIcon, LinkedInIcon } from "@/components/icons";
 import { MotionSwitch } from "@/components/motion/MotionToggle";
 
-/** Footer (brief §3): white logo on deep blue, tagline, three columns, copyright. No Acceleret Media. */
+/** Footer (brief §3): white logo with its tagline on deep blue, three columns, copyright. No Acceleret Media. */
 export function Footer() {
   const { contact, showPending } = site;
   const tel = phoneHref();
@@ -16,20 +16,9 @@ export function Footer() {
       <div className="wrap site-footer__inner">
         <div className="site-footer__brand">
           <Link href="/" aria-label={`${site.name} home`}>
-            <Logo tone="white" />
+            <Logo tone="white" tagline />
           </Link>
-          <p className="site-footer__tagline">
-            {site.tagline.split(" > ").map((word, i, all) => (
-              <span key={word}>
-                {word}
-                {i < all.length - 1 ? (
-                  <span className="site-footer__chev" aria-hidden>
-                    {" > "}
-                  </span>
-                ) : null}
-              </span>
-            ))}
-          </p>
+          <p className="sr-only">{site.tagline.replaceAll(" > ", ", ")}</p>
         </div>
 
         <nav className="site-footer__col" aria-labelledby="footer-services">
