@@ -11,7 +11,7 @@ export function organizationJsonLd() {
     "@type": "Organization",
     name: site.name,
     url: site.url,
-    logo: `${site.url}/icon.svg`,
+    logo: `${site.url}/logo.svg`,
     description: seo.home.description,
     email: site.contact.email,
     slogan: site.tagline,

@@ -1,16 +1,17 @@
 import { ImageResponse } from "next/og";
+import { LOGO_A, LOGO_BLUE, LOGO_INK, LOGO_MARK } from "@/components/chrome/logoPaths";
 
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
-/** Placeholder app icon until the brand kit arrives. */
+/** App icon: the logo's "A" with its blue corner mark (same as icon.svg). */
 export default function AppleIcon() {
   return new ImageResponse(
     (
-      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "#0a2163" }}>
-        <svg width="132" height="132" viewBox="0 0 32 32">
-          <path d="M9.5 9.5 16.5 16l-7 6.5" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
-          <circle cx="22.5" cy="16" r="2.6" fill="#a8bcff" />
+      <div style={{ width: "100%", height: "100%", display: "flex", background: "#ffffff" }}>
+        <svg width="180" height="180" viewBox="0 0 320 320">
+          <path transform="translate(22 14) scale(0.917)" fill={LOGO_INK} d={LOGO_A} />
+          <path transform="translate(-377.4 22) scale(0.42)" fill={LOGO_BLUE} d={LOGO_MARK} />
         </svg>
       </div>
     ),

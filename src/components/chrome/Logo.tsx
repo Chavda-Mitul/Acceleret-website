@@ -1,20 +1,43 @@
-import { site } from "@/content/site";
+import {
+  LOGO_CHEVRONS,
+  LOGO_FULL_H,
+  LOGO_H,
+  LOGO_MARK,
+  LOGO_TAGLINE,
+  LOGO_W,
+  LOGO_WORD,
+} from "./logoPaths";
 
 /**
- * Placeholder logo until the brand kit arrives (brief §7, due 23 Oct).
- * The mark is the tagline's ">" drawn as a route with a node at the end:
- * the same vocabulary as the diagrams across the site.
- * Swap this component (and src/app/icon.svg) for the real logo.
+ * The Acceleret logo: the wordmark with its blue corner mark and, where
+ * there's room (`tagline`), "Build > Automate > Accelerate" underneath.
+ * `white` is for deep-blue backgrounds. Always sits inside a link or next to
+ * text that names the site, so it's hidden from screen readers.
  */
-export function Logo({ tone = "blue", className = "" }: { tone?: "blue" | "white"; className?: string }) {
+export function Logo({
+  tone = "blue",
+  tagline = false,
+  className = "",
+}: {
+  tone?: "blue" | "white";
+  tagline?: boolean;
+  className?: string;
+}) {
   return (
-    <span className={`logo logo--${tone} ${className}`}>
-      <svg className="logo-mark" viewBox="0 0 32 32" aria-hidden focusable={false}>
-        <rect width="32" height="32" rx="9" className="logo-tile" />
-        <path d="M9.5 9.5 16.5 16l-7 6.5" className="logo-route" />
-        <circle cx="22.5" cy="16" r="2.6" className="logo-node" />
-      </svg>
-      <span className="logo-word">{site.name}</span>
-    </span>
+    <svg
+      className={`logo logo--${tone}${tagline ? " logo--full" : ""} ${className}`}
+      viewBox={`0 0 ${LOGO_W} ${tagline ? LOGO_FULL_H : LOGO_H}`}
+      aria-hidden
+      focusable={false}
+    >
+      <path d={LOGO_WORD} className="logo-word" />
+      <path d={LOGO_MARK} className="logo-mark" />
+      {tagline ? (
+        <>
+          <path d={LOGO_TAGLINE} className="logo-tagline" />
+          <path d={LOGO_CHEVRONS} className="logo-chev" />
+        </>
+      ) : null}
+    </svg>
   );
 }
