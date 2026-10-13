@@ -229,6 +229,7 @@ function textileShop(s: Sketch, x: number, w: number, h: number) {
   const cloths: [number, number, number, string][] = [[x + 32, 26, 30, "stripes"], [x + 68, 34, 24, "dots"], [x + 112, 26, 34, "plain"]];
   for (const [cx0, cw, ch, kind] of cloths) {
     const t0 = ly + 4;
+    s.fill([[cx0, t0], [cx0 + cw, t0 + 1], [cx0 + cw - 1, t0 + ch + 3], [cx0, t0 + ch + 3]]);
     s.line([cx0, t0], [cx0 + cw, t0 + 1], "ink", { over: 0.4 });
     s.line([cx0, t0], [cx0 + 1, t0 + ch], "ink", { over: 0.4 });
     s.line([cx0 + cw, t0 + 1], [cx0 + cw - 1, t0 + ch + 2], "ink", { over: 0.4 });

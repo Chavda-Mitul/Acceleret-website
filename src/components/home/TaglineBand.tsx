@@ -3,6 +3,7 @@
 import { Fragment, useRef } from "react";
 import { site } from "@/content/site";
 import { useScene } from "@/lib/motion";
+import { Spine } from "@/components/motion/Spine";
 
 /**
  * The tagline (brief §3) as kinetic type between the problem and the
@@ -67,6 +68,7 @@ export function TaglineBand() {
 
   return (
     <section ref={ref} className="band" aria-label={site.tagline}>
+      <Spine />
       <div className="band__row" aria-hidden>
         {row(3)}
       </div>

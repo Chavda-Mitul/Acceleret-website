@@ -450,7 +450,7 @@ html:not(.no-js) .pscene__closing .sw {
 
 .band {
   position: relative;
-  overflow: hidden;
+  overflow: clip;
   padding-block: clamp(2.5rem, 2rem + 4vw, 6rem);
   border-block: 1px solid var(--rule);
   background: #fff;
@@ -466,6 +466,9 @@ html:not(.no-js) .pscene__closing .sw {
   line-height: 0.95;
   white-space: nowrap;
   will-change: transform;
+  /* the words pass over the spine */
+  position: relative;
+  z-index: 1;
 }
 .band__row--2 {
   --fill: 0%;
@@ -579,6 +582,11 @@ html:not(.no-js) .pscene__closing .sw {
 .journey.is-horizontal .journey__wrap {
   max-width: none;
   padding-inline: 0;
+  /* panels fade out as they reach the spine and are gone past it: clear up to
+     the line (half the content offset), solid from the content edge */
+  --edge: max(var(--gutter), (100% - var(--max)) / 2);
+  -webkit-mask-image: linear-gradient(to right, transparent calc(var(--edge) / 2), #000 var(--edge));
+  mask-image: linear-gradient(to right, transparent calc(var(--edge) / 2), #000 var(--edge));
 }
 .journey.is-horizontal .journey__panels {
   display: flex;
@@ -1008,11 +1016,6 @@ html:not(.no-js) .pscene__closing .sw {
 }
 .work-card__pencil {
   color: var(--ink-2);
-}
-
-/* team */
-.team__note {
-  margin-top: 1.5rem;
 }
 
 /* closing band */

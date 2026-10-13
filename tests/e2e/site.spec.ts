@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const routes = ["/", "/services", "/how-we-work", "/products", "/work", "/work/sample-textile-exporter", "/contact", "/privacy"];
+const routes = ["/", "/services", "/how-we-work", "/products", "/work", "/work/sample-textile-exporter", "/team", "/contact", "/privacy"];
 
 function collectErrors(page: Page) {
   const errors: string[] = [];
@@ -148,6 +148,16 @@ test("pressing turns the arrow into a pencil that draws, and scrolling rubs it o
   await page.mouse.up();
   await expect(layer).toBeVisible();
   await expect(html).not.toHaveClass(/is-pressing|is-drawing/);
+  // the pencil rests, and the sketch is inked over in the route's blue
+  await expect
+    .poll(() =>
+      layer.evaluate((c: HTMLCanvasElement) => {
+        const d = c.getContext("2d")!.getImageData(0, 0, c.width, c.height).data;
+        for (let i = 0; i < d.length; i += 4) if (d[i + 3] > 200 && d[i + 2] > 200 && d[i] < 80 && d[i + 1] < 120) return true;
+        return false;
+      }),
+    )
+    .toBe(true);
   await page.mouse.wheel(0, 400);
   await expect(layer).toBeHidden();
 });

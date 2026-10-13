@@ -15,6 +15,8 @@ type Geometry = {
   route: string;
   /** Seconds after the route starts drawing that it reaches each drawing. */
   locks: number[];
+  /** How far along the route (0–1) each drawing sits. */
+  stops: number[];
 };
 
 const ROUTE_DRAW = 1.8; // seconds, matches .hs-route in hero.css
@@ -56,6 +58,9 @@ export function HeroSystems() {
   const tokenRef = useRef<SVGGElement>(null);
   const timers = useRef<number[]>([]);
   const played = useRef(false);
+  /** Sends the dot along the line to a drawing; false when it can't go (calm motion, scrolled). */
+  const travelRef = useRef<((i: number, arrive: () => void) => boolean) | null>(null);
+  const busy = useRef(new Set<number>());
   const [phase, setPhase] = useState<Phase>("init");
   const [geo, setGeo] = useState<Geometry | null>(null);
 
@@ -114,9 +119,10 @@ export function HeroSystems() {
     const raw = [...head, ...through.pts, ...tail];
     const lens = cumulative(raw);
     const total = lens[lens.length - 1];
-    const locks = pts.map((_, i) => ROUTE_DELAY + ROUTE_DRAW * easeDrawInverse(lens[head.length + through.nodeIndex[i]] / total));
+    const stops = pts.map((_, i) => lens[head.length + through.nodeIndex[i]] / total);
+    const locks = stops.map((f) => ROUTE_DELAY + ROUTE_DRAW * easeDrawInverse(f));
 
-    setGeo({ w: hr.width, h: hr.height, route: roundedPath(dedupe(raw), 26), locks });
+    setGeo({ w: hr.width, h: hr.height, route: roundedPath(dedupe(raw), 26), locks, stops });
   }, []);
 
   useEffect(() => {
@@ -188,7 +194,11 @@ export function HeroSystems() {
     const waits: number[] = [];
     let raf = 0;
     let begin = 0;
+    let running = false;
     let scrolled = false;
+    let held = 0; // the visitor is playing: the dot's own runs wait until then
+    let at = -1; // the drawing the visitor last sent the dot to
+    let go = 0;
     const firstDelay = (ROUTE_DELAY + ROUTE_DRAW) * 1000 + 300;
 
     const tick = (now: number) => {
@@ -197,6 +207,7 @@ export function HeroSystems() {
       if (t >= 1) {
         token.style.opacity = "0";
         begin = 0;
+        running = false;
         loop(rest);
         return;
       }
@@ -208,22 +219,88 @@ export function HeroSystems() {
     const loop = (delay: number) => {
       waits.push(
         window.setTimeout(() => {
-          if (!visible || document.hidden || scrolled) return loop(1500);
+          if (!visible || document.hidden || scrolled || performance.now() < held) return loop(1500);
+          running = true;
           raf = requestAnimationFrame(tick);
         }, delay),
       );
     };
     loop(firstDelay);
+    const stopRun = () => {
+      if (!running) return;
+      cancelAnimationFrame(raf);
+      running = false;
+      begin = 0;
+      loop(rest);
+    };
+
+    // Pointing at a drawing sends the dot to it, out of the one before (or the
+    // last one visited): the line is what makes them one system.
+    travelRef.current = (i, arrive) => {
+      if (scrolled) return false;
+      stopRun();
+      cancelAnimationFrame(go);
+      held = performance.now() + 6000;
+      const from = (at >= 0 && at !== i ? geo.stops[at] : i > 0 ? geo.stops[i - 1] : 0) * total;
+      const to = geo.stops[i] * total;
+      at = i;
+      const dur = Math.min(1000, Math.max(450, (Math.abs(to - from) / total) * 2600));
+      let t0 = 0;
+      const step = (now: number) => {
+        if (!t0) t0 = now;
+        const t = Math.min(1, (now - t0) / dur);
+        const p = path.getPointAtLength(from + (to - from) * easeInOut(t));
+        token.style.transform = `translate(${p.x}px, ${p.y}px)`;
+        token.style.opacity = t < 0.15 ? String(t / 0.15) : t > 0.85 ? String((1 - t) / 0.15) : "1";
+        if (t < 1) go = requestAnimationFrame(step);
+        else {
+          token.style.opacity = "0";
+          arrive();
+        }
+      };
+      go = requestAnimationFrame(step);
+      return true;
+    };
+
+    // The drawing leans a little towards the pointer (lines and drawings move
+    // together). The lean settles to nothing as the hero's bottom reaches the
+    // next section's drawn tip (62% down, see Spine), so the line leaving down
+    // the margin meets the spine exactly.
+    const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    const layers = [hero.querySelector<HTMLElement>(".hs-map"), hero.querySelector<SVGElement>(".hs-lines")];
+    let px = 0;
+    let py = 0;
+    let settle = 1;
+    let lean = 0;
+    const applyLean = () => {
+      lean = 0;
+      const k = settle;
+      for (const l of layers) if (l) l.style.translate = k ? `${(px * -10 * k).toFixed(1)}px ${(py * -7 * k).toFixed(1)}px` : "";
+    };
+    const queueLean = () => {
+      if (!lean) lean = requestAnimationFrame(applyLean);
+    };
+    const onPointer = (e: PointerEvent) => {
+      px = (e.clientX / window.innerWidth - 0.5) * 2;
+      py = (e.clientY / window.innerHeight - 0.5) * 2;
+      queueLean();
+    };
+    if (fine) window.addEventListener("pointermove", onPointer, { passive: true });
 
     // As the hero scrolls away, the scroll itself carries the dot along the
     // line and out down the margin, into the rest of the page.
-    const unsubscribe = subscribeScroll(hero, (rect) => {
+    const unsubscribe = subscribeScroll(hero, (rect, vh) => {
+      const k = Math.min(1, Math.max(0, (rect.bottom - vh * 0.62) / 200));
+      if (k !== settle) {
+        settle = k;
+        if (fine) queueLean();
+      }
       const p = Math.min(1, Math.max(0, -rect.top / (rect.height * 0.8)));
       if (p > 0.01) {
         if (!scrolled) {
           scrolled = true;
-          cancelAnimationFrame(raf);
-          begin = 0;
+          stopRun();
+          cancelAnimationFrame(go);
         }
         const pt = path.getPointAtLength(p * total);
         token.style.transform = `translate(${pt.x}px, ${pt.y}px)`;
@@ -234,34 +311,37 @@ export function HeroSystems() {
       }
     });
 
-    // The drawing leans a little towards the pointer (lines and drawings move together).
-    const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-    const layers = [hero.querySelector<HTMLElement>(".hs-map"), hero.querySelector<SVGElement>(".hs-lines")];
-    let px = 0;
-    let py = 0;
-    let lean = 0;
-    const onPointer = (e: PointerEvent) => {
-      px = (e.clientX / window.innerWidth - 0.5) * 2;
-      py = (e.clientY / window.innerHeight - 0.5) * 2;
-      if (!lean) lean = requestAnimationFrame(applyLean);
-    };
-    const applyLean = () => {
-      lean = 0;
-      for (const l of layers) if (l) l.style.translate = `${(px * -10).toFixed(1)}px ${(py * -7).toFixed(1)}px`;
-    };
-    if (fine) window.addEventListener("pointermove", onPointer, { passive: true });
-
     return () => {
       io.disconnect();
       unsubscribe();
       cancelAnimationFrame(raf);
+      cancelAnimationFrame(go);
       cancelAnimationFrame(lean);
+      travelRef.current = null;
       waits.forEach((w) => window.clearTimeout(w));
       window.removeEventListener("pointermove", onPointer);
       for (const l of layers) if (l) l.style.translate = "";
       token.style.opacity = "0";
     };
   }, [phase, geo, motion]);
+
+  /* ---------------------------------------------------------- play with it
+     Pointing at (or tapping) a built drawing sends the dot to it, and it
+     does its job once: the bars grow, the deal moves on, the reply comes in. */
+  const poke = (i: number) => {
+    if (phase !== "built" || busy.current.has(i)) return;
+    const li = mapRef.current?.querySelector<HTMLElement>(`.hs-obj[data-slot="${i}"]`);
+    if (!li) return;
+    busy.current.add(i);
+    const run = () => {
+      li.classList.add("is-run");
+      window.setTimeout(() => {
+        li.classList.remove("is-run");
+        busy.current.delete(i);
+      }, 1900);
+    };
+    if (!travelRef.current?.(i, run)) run();
+  };
 
   return (
     <>
@@ -296,6 +376,9 @@ export function HeroSystems() {
                 key={o.id}
                 className={`hs-obj${o.open ? " hs-obj--open" : ""}`}
                 data-slot={i}
+                data-no-draw
+                onPointerEnter={() => poke(i)}
+                onClick={() => poke(i)}
                 style={{ "--i": i, "--w": o.w, "--lock": `${geo?.locks[i] ?? 0}s` } as CSSProperties}
               >
                 <svg className="hs-obj__art" viewBox={`-6 -6 ${o.w + 12} ${o.h + 12}`} focusable={false}>

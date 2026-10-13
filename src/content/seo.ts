@@ -24,6 +24,10 @@ export const seo = {
     title: "Work | Acceleret",
     description: "Case studies: what Acceleret built and what changed.",
   },
+  team: {
+    title: "Who we are | Acceleret",
+    description: "The founders behind Acceleret, a software studio in Surat.",
+  },
   contact: {
     title: "Contact | Acceleret",
     description: "Book a 30-minute operations walkthrough with Acceleret in Surat.",

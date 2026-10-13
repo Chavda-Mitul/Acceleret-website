@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import type { StageId } from "@/content/process";
 import { seeded, sketchCurve, sketchRect } from "@/lib/geometry";
+import { Engineer } from "./Engineer";
 
 /*
  * One workflow, drawn four times over: Embed (pencil field notes) → Map
@@ -67,6 +68,7 @@ export function ProcessDrawing({
   stage,
   layout = "wide",
   className = "",
+  engineer = false,
 }: {
   /**
    * Which stage to draw. Leave it out when an ancestor sets data-stage (a
@@ -76,9 +78,12 @@ export function ProcessDrawing({
   stage?: StageId | "blank";
   layout?: Layout;
   className?: string;
+  /** Wide layout only: the engineer acting out each stage, in the margin left of the drawing. */
+  engineer?: boolean;
 }) {
   const g = L[layout];
   const [vw, vh] = g.vb;
+  const margin = engineer && layout === "wide" ? 410 : 0;
   const rnd = seeded(layout === "wide" ? 4411 : 7723);
   const c = (b: Box) => ({ x: b.x + g.w / 2, y: b.y + g.h / 2 });
 
@@ -98,7 +103,7 @@ export function ProcessDrawing({
   return (
     <svg
       className={`pd pd--${layout} ${className}`}
-      viewBox={`0 0 ${vw} ${vh}`}
+      viewBox={`${-margin} 0 ${vw + margin} ${vh}`}
       data-stage={stage}
       aria-hidden
       focusable={false}
@@ -248,6 +253,8 @@ export function ProcessDrawing({
           );
         })}
       </g>
+
+      {margin ? <Engineer /> : null}
     </svg>
   );
 }

@@ -99,8 +99,14 @@
 
 /* the street, between the tagline and the services */
 .art-street {
-  overflow: hidden;
+  position: relative;
+  overflow: clip;
   padding-block: clamp(1rem, 3vw, 3rem) clamp(2.5rem, 5vw, 5rem);
+}
+/* above the spine, so the buildings' paper hides it */
+.art--street {
+  position: relative;
+  z-index: 1;
 }
 @media (max-width: 760px) {
   .art--street svg,

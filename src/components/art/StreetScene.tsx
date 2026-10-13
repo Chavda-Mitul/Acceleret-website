@@ -1,9 +1,12 @@
 import { LazyArt } from "./LazyArt";
+import { Spine } from "@/components/motion/Spine";
 
 /** The street where the work happens, drawn in pencil, with the route connecting every door. */
 export function StreetScene() {
   return (
     <div className="art-street">
+      {/* under the drawing: hidden behind the shop, it meets the road's route */}
+      <Spine />
       <LazyArt
         kind="street"
         ratio="1600 / 470"
