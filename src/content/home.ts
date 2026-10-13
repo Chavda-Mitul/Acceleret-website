@@ -41,7 +41,3 @@ export const build = {
 export const proof = {
   heading: "Work",
 };
-
-export const team = {
-  heading: "Who we are",
-};

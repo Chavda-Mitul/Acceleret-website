@@ -24,6 +24,7 @@ export const site = {
   companyLinks: [
     { label: "How we work", href: "/how-we-work" },
     { label: "Work", href: "/work" },
+    { label: "Who we are", href: "/team" },
     { label: "Contact", href: "/contact" },
     { label: "Privacy", href: "/privacy" },
   ] satisfies NavItem[],

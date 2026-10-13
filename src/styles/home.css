@@ -19,13 +19,26 @@
   transform-origin: top;
   transform: scaleY(var(--p, 0));
 }
-.spine--pencil .spine__line {
-  background: repeating-linear-gradient(to bottom, var(--pencil) 0 7px, transparent 7px 13px);
+/* Drawn on the compositor where scroll timelines exist, so it keeps pace with
+   the scroll. The inset viewport is a single line 62% down the screen: the
+   same tip as progressFor("tip"), so each section hands off to the next. */
+@keyframes spine-draw {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
 }
-.spine--light .spine__line {
-  background: var(--sky);
+@supports (animation-timeline: view()) {
+  .spine__line {
+    animation: spine-draw linear both;
+    animation-timeline: view(62% 38%);
+  }
 }
+html[data-motion="calm"] .spine__line,
 .no-js .spine__line {
+  animation: none;
   transform: none;
 }
 
@@ -686,6 +699,424 @@
   display: none;
 }
 
+/* ------------------------------------------------------------------ the engineer (process drawing margin)
+   The pose is scrubbed by the scroll (Engineer.tsx writes these variables
+   every frame); these are the first frame, before it runs. Small loops play
+   only once the page is still: data-idle names the stage they're settled in. */
+
+.eng {
+  --hx: -125px;
+  --hy: 388px;
+  --face: 1;
+  --lean: 6deg;
+  --head: 12deg;
+  --a1: -40deg;
+  --a2: -75deg;
+  --b1: -30deg;
+  --b2: -60deg;
+  --l1: -86deg;
+  --l2: 86deg;
+  --k1: -82deg;
+  --k2: 84deg;
+  --book: 1;
+  --pencil: 1;
+  --mug: 0;
+  --deskMug: 1;
+  --phones: 0;
+}
+
+.eng line,
+.eng path,
+.eng rect,
+.eng circle {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.eng-props path,
+.eng-props circle {
+  stroke: var(--ink-3);
+  stroke-width: 1.6;
+}
+.eng-props .eng-ground {
+  stroke: var(--pencil);
+  stroke-width: 1.3;
+}
+.eng-props .eng-screen {
+  fill: #fff;
+  stroke: none;
+}
+.eng-props .eng-keys {
+  stroke-width: 2.2;
+}
+.eng-props .eng-wheel {
+  fill: #fff;
+  stroke-width: 1.4;
+}
+.eng .eng-skull {
+  fill: #fff;
+}
+.eng .eng-hand {
+  fill: var(--ink);
+  stroke: none;
+}
+.eng .eng-shoe {
+  stroke-width: 3;
+}
+.eng .eng-glasses,
+.eng .eng-mouth,
+.eng .eng-hair {
+  stroke-width: 1.6;
+}
+.eng .eng-pupil {
+  fill: var(--ink);
+  stroke: none;
+  transition: transform 0.15s linear;
+}
+
+/* the skeleton */
+.eng-hip {
+  transform: translate(var(--hx), var(--hy)) scaleX(var(--face));
+}
+.eng-torso {
+  transform: rotate(var(--lean));
+}
+.eng-head {
+  transform: rotate(var(--head));
+}
+.eng-armA {
+  transform: rotate(var(--a1));
+}
+.eng-elbA {
+  transform: rotate(var(--a2));
+}
+.eng-armB {
+  transform: rotate(var(--b1));
+}
+.eng-elbB {
+  transform: rotate(var(--b2));
+}
+.eng-legA {
+  transform: rotate(var(--l1));
+}
+.eng-kneeA {
+  transform: rotate(var(--l2));
+}
+.eng-legB {
+  transform: rotate(var(--k1));
+}
+.eng-kneeB {
+  transform: rotate(var(--k2));
+}
+
+/* what's in hand, on the head, on the desk */
+.eng-prop--book {
+  opacity: var(--book);
+}
+.eng-prop--pencil {
+  opacity: var(--pencil);
+}
+.eng-prop--mug {
+  opacity: var(--mug);
+}
+.eng-deskmug {
+  opacity: var(--deskMug);
+}
+.eng-phones {
+  opacity: var(--phones);
+}
+.eng .eng-prop--book rect {
+  fill: #fff;
+  stroke-width: 1.8;
+}
+.eng .eng-prop--book path,
+.eng .eng-prop--pencil {
+  stroke-width: 1.5;
+}
+.eng .eng-prop--pencil {
+  stroke: var(--electric);
+}
+.eng .eng-prop--mug path:first-child,
+.eng .eng-deskmug path:first-child {
+  fill: #fff;
+  stroke-width: 1.8;
+}
+.eng .eng-phones path {
+  stroke: var(--electric);
+  stroke-width: 2.2;
+}
+.eng .eng-phones rect {
+  fill: var(--electric);
+  stroke: none;
+}
+.eng .eng-steam {
+  stroke: var(--pencil);
+  stroke-width: 1.3;
+  animation: eng-steam 2.4s ease-in-out infinite;
+}
+
+/* the screen: each stage's view, cross-faded by the scroll */
+.eng-scr {
+  opacity: var(--o, 0);
+}
+.eng.has-copy .eng-scr {
+  opacity: 0;
+}
+.eng .eng-scr--embed path {
+  stroke: var(--pencil-2);
+  stroke-width: 1.6;
+}
+.eng .eng-scr--map rect,
+.eng .eng-scr--map path {
+  stroke: var(--ink-3);
+  stroke-width: 1.3;
+}
+.eng .eng-code {
+  stroke: none;
+  transform-box: fill-box;
+  transform-origin: left;
+}
+.eng .eng-code--k {
+  fill: var(--electric);
+}
+.eng .eng-code--f {
+  fill: var(--sky);
+}
+.eng .eng-code--s {
+  fill: var(--pencil-2);
+}
+.eng .eng-caret {
+  fill: var(--electric);
+  stroke: none;
+}
+.eng .eng-pulse {
+  stroke: var(--electric);
+  stroke-width: 1.8;
+  stroke-dasharray: 1;
+}
+.eng .eng-live {
+  fill: var(--electric);
+  stroke: var(--sky-2);
+  stroke-width: 3;
+}
+
+/* the visitor's doodle, typed up */
+.eng-copy {
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-out);
+}
+.eng.has-copy .eng-copy {
+  opacity: 1;
+}
+.eng .eng-copy__line {
+  stroke: var(--electric);
+  stroke-width: 1.6;
+  vector-effect: non-scaling-stroke;
+}
+.eng .eng-copy__tip {
+  fill: var(--electric);
+  stroke: none;
+  opacity: 0;
+}
+.eng.is-copying .eng-copy__tip {
+  opacity: 1;
+  animation: eng-blink 0.8s steps(1) infinite;
+}
+
+/* code drifting off the screen, and the hop's burst */
+.eng-floats text,
+.eng-burst text {
+  font-family: var(--font-hand);
+  font-size: 15px;
+  fill: var(--electric);
+  opacity: 0;
+}
+
+/* idle loops: only once the page is still, for the stage they're settled in */
+.eng[data-idle="embed"] .eng-elbA {
+  animation: eng-scribble 0.5s ease-in-out infinite alternate;
+}
+.eng[data-idle="embed"] .eng-head {
+  animation: eng-glance 5s ease-in-out infinite;
+}
+.eng[data-idle="map"] .eng-elbA {
+  animation: eng-tap 1.1s ease-in-out infinite;
+}
+.eng[data-idle="build"] .eng-elbA {
+  animation: eng-typeA 0.3s ease-in-out infinite alternate;
+}
+.eng[data-idle="build"] .eng-elbB {
+  animation: eng-typeA 0.3s ease-in-out -0.15s infinite alternate;
+}
+.eng[data-idle="build"] .eng-head {
+  animation: eng-nod 0.9s ease-in-out infinite;
+}
+.eng[data-idle="build"] .eng-floats text {
+  animation: eng-float 3.2s var(--ease-out) infinite;
+  animation-delay: calc(var(--i) * 0.8s + 0.3s);
+}
+.eng[data-idle="build"] .eng-code {
+  animation: eng-type 4.2s steps(7, end) infinite;
+  animation-delay: calc(var(--i) * 0.45s);
+}
+.eng[data-idle="build"] .eng-caret,
+.eng[data-idle="run"] .eng-live {
+  animation: eng-blink 1s steps(1) infinite;
+}
+.eng[data-idle="run"] .eng-armA {
+  animation: eng-sip 4.5s ease-in-out infinite;
+}
+.eng[data-idle="run"] .eng-pulse {
+  animation: eng-pulse 2.2s var(--ease-in-out) infinite;
+}
+
+/* a click on the desk: a hop and a burst of code */
+.eng .eng-hit {
+  fill: transparent;
+  stroke: none;
+  pointer-events: all;
+  cursor: var(--cursor-hand);
+}
+.eng.is-hop .eng-hop {
+  animation: eng-hop 0.6s var(--ease-out);
+}
+.eng.is-hop .eng-burst text {
+  animation: eng-burst 0.9s var(--ease-out);
+}
+
+@keyframes eng-type {
+  0% {
+    scale: 0 1;
+  }
+  45%,
+  100% {
+    scale: 1 1;
+  }
+}
+@keyframes eng-blink {
+  50% {
+    opacity: 0;
+  }
+}
+@keyframes eng-pulse {
+  from {
+    stroke-dashoffset: 1;
+  }
+  60%,
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes eng-float {
+  0% {
+    opacity: 0;
+    translate: 0 6px;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    translate: 0 -46px;
+  }
+}
+@keyframes eng-steam {
+  0%,
+  100% {
+    opacity: 0.2;
+    translate: 0 2px;
+  }
+  50% {
+    opacity: 1;
+    translate: 0 -2px;
+  }
+}
+@keyframes eng-scribble {
+  from {
+    rotate: -5deg;
+  }
+  to {
+    rotate: 4deg;
+  }
+}
+@keyframes eng-glance {
+  0%,
+  60%,
+  100% {
+    rotate: 0deg;
+  }
+  68%,
+  88% {
+    rotate: -22deg;
+  }
+}
+@keyframes eng-tap {
+  0%,
+  100% {
+    rotate: 0deg;
+  }
+  40% {
+    rotate: -9deg;
+  }
+}
+@keyframes eng-typeA {
+  from {
+    rotate: -4deg;
+  }
+  to {
+    rotate: 5deg;
+  }
+}
+@keyframes eng-nod {
+  0%,
+  100% {
+    rotate: 0deg;
+  }
+  50% {
+    rotate: 4deg;
+  }
+}
+@keyframes eng-sip {
+  0%,
+  55%,
+  100% {
+    rotate: 0deg;
+  }
+  65%,
+  80% {
+    rotate: -38deg;
+  }
+}
+@keyframes eng-hop {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  35% {
+    translate: 0 -24px;
+  }
+  60% {
+    translate: 0 2px;
+  }
+}
+@keyframes eng-burst {
+  0% {
+    opacity: 0;
+    translate: 0 0;
+    scale: 0.4;
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    translate: var(--dx) var(--dy);
+    scale: 1;
+  }
+}
+
 /* ------------------------------------------------------------------ work */
 
 .work-home {
@@ -844,17 +1275,7 @@
 
 .team {
   position: relative;
-}
-.team__inner {
-  display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 2.1fr);
-  gap: 2.5rem 4rem;
-}
-.team__pending {
-  margin-top: 1.25rem;
-}
-.team__pending .pending-tag {
-  white-space: normal;
+  padding-top: 0; /* it follows the page hero, like .work-list */
 }
 .team__grid {
   list-style: none;
@@ -915,11 +1336,6 @@
 .person__line {
   margin-top: 0.25rem;
   color: var(--ink-2);
-}
-@media (max-width: 899px) {
-  .team__inner {
-    grid-template-columns: minmax(0, 1fr);
-  }
 }
 @media (max-width: 639px) {
   .team__grid {
@@ -1001,7 +1417,7 @@
   width: calc(max(var(--gutter), (100cqw - var(--max)) / 2) / 2);
   height: 2px;
   margin-top: -1px;
-  background: linear-gradient(to right, transparent 14px, var(--sky) 14px);
+  background: linear-gradient(to right, transparent 14px, var(--electric) 14px);
 }
 .cta-band__arrive::before {
   content: "";
@@ -1010,8 +1426,8 @@
   bottom: 0;
   width: 15px;
   height: 300vh;
-  border-left: 2px solid var(--sky);
-  border-bottom: 2px solid var(--sky);
+  border-left: 2px solid var(--electric);
+  border-bottom: 2px solid var(--electric);
   border-bottom-left-radius: 14px;
 }
 @media (max-width: 1023px) {

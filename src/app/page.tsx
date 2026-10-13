@@ -12,7 +12,6 @@ import { ProcessHome } from "@/components/home/ProcessHome";
 import { ProcessDrawing } from "@/components/diagrams/ProcessDrawing";
 import { stages, type StageId } from "@/content/process";
 import { Work } from "@/components/home/Work";
-import { Team } from "@/components/home/Team";
 import { CtaBand } from "@/components/CtaBand";
 import { JsonLd } from "@/components/JsonLd";
 import { organizationJsonLd } from "@/lib/schema";
@@ -42,9 +41,8 @@ export default function HomePage() {
       <TaglineBand />
       <StreetScene />
       <ServicesJourney diagrams={serviceDiagrams} />
-      <ProcessHome drawing={<ProcessDrawing layout="wide" />} stack={processStack} />
+      <ProcessHome drawing={<ProcessDrawing layout="wide" engineer />} stack={processStack} />
       <Work />
-      <Team />
       <CtaBand />
     </>
   );

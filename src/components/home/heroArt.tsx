@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { Sketch } from "@/lib/sketch";
 
 /*
@@ -53,14 +53,14 @@ const phone: HeroObject = {
       <rect x={9} y={15} width={60} height={104} rx={4} className="hb-soft" />
       <path d="M9 19 Q9 15 13 15 H65 Q69 15 69 19 V33 H9 Z" className="hb-blue" />
       <rect x={31} y={8} width={16} height={3} rx={1.5} className="hb-dark" />
-      {phoneRows.map((y) => (
-        <g key={y}>
+      {phoneRows.map((y, i) => (
+        <g key={y} className="hb-row" style={{ "--r": i } as CSSProperties}>
           <circle cx={19} cy={y + 4} r={5} className="hb-sky" />
           <rect x={28} y={y} width={32} height={3.5} rx={1.75} className="hb-bar" />
           <rect x={28} y={y + 6} width={20} height={3} rx={1.5} className="hb-bar hb-bar--soft" />
         </g>
       ))}
-      <rect x={17} y={99} width={44} height={12} rx={6} className="hb-blue" />
+      <rect x={17} y={99} width={44} height={12} rx={6} className="hb-blue hb-press" />
       <rect x={30} y={125} width={18} height={2.5} rx={1.25} className="hb-dark" />
     </>
   ),
@@ -110,6 +110,7 @@ const laptop: HeroObject = {
           height={h}
           rx={2}
           className={i >= 3 ? "hb-blue hb-grow" : "hb-sky hb-grow"}
+          style={{ "--b": i } as CSSProperties}
         />
       ))}
       <circle cx={142} cy={58} r={14.5} className="hb-ring" />

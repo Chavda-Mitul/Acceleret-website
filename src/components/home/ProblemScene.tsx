@@ -287,7 +287,7 @@ export function ProblemScene() {
 
   return (
     <section ref={ref} className="pscene" aria-labelledby="problem-title">
-      <Spine tone="pencil" />
+      <Spine />
       <div className="pscene__track">
         <div className="pscene__sticky">
           <div className="wrap pscene__inner">
