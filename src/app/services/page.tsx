@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { seo } from "@/content/seo";
+import { baseOpenGraph, seo } from "@/content/seo";
 import { services, servicesIntro } from "@/content/services";
 import { PageHero } from "@/components/PageHero";
 import { CtaBand } from "@/components/CtaBand";
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   title: seo.services.title,
   description: seo.services.description,
   alternates: { canonical: "/services" },
-  openGraph: { title: seo.services.title, description: seo.services.description, url: "/services" },
+  openGraph: { ...baseOpenGraph, title: seo.services.title, description: seo.services.description, url: "/services" },
 };
 
 // The brief's intro: its first sentence is the headline, the second the lead.

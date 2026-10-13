@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import type { CSSProperties } from "react";
-import { seo } from "@/content/seo";
+import { baseOpenGraph, seo } from "@/content/seo";
 import { products, productsIntro, productButtonLabel } from "@/content/products";
 import { site } from "@/content/site";
 import { PageHero } from "@/components/PageHero";
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title: seo.products.title,
   description: seo.products.description,
   alternates: { canonical: "/products" },
-  openGraph: { title: seo.products.title, description: seo.products.description, url: "/products" },
+  openGraph: { ...baseOpenGraph, title: seo.products.title, description: seo.products.description, url: "/products" },
 };
 
 export default function ProductsPage() {

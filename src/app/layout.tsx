@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Anek_Latin, Kalam } from "next/font/google";
 import { site } from "@/content/site";
-import { seo } from "@/content/seo";
+import { baseOpenGraph, seo } from "@/content/seo";
 import { Header } from "@/components/chrome/Header";
 import { Footer } from "@/components/chrome/Footer";
 import { WhatsAppButton } from "@/components/chrome/WhatsAppButton";
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   title: { default: seo.home.title, template: "%s" },
   description: seo.home.description,
   applicationName: site.name,
-  openGraph: { siteName: site.name, locale: "en_IN", type: "website" },
+  openGraph: baseOpenGraph,
   twitter: { card: "summary_large_image" },
   formatDetection: { telephone: false },
   // Google Search Console: set GOOGLE_SITE_VERIFICATION to the HTML-tag token.

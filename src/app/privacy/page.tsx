@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { seo } from "@/content/seo";
+import { baseOpenGraph, seo } from "@/content/seo";
 import { site } from "@/content/site";
 import { PageHero } from "@/components/PageHero";
 import { Spine } from "@/components/motion/Spine";
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: seo.privacy.title,
   description: seo.privacy.description,
   alternates: { canonical: "/privacy" },
-  openGraph: { title: seo.privacy.title, description: seo.privacy.description, url: "/privacy" },
+  openGraph: { ...baseOpenGraph, title: seo.privacy.title, description: seo.privacy.description, url: "/privacy" },
 };
 
 /*

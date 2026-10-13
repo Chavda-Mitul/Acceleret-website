@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { seo } from "@/content/seo";
+import { baseOpenGraph, seo } from "@/content/seo";
 import { caseStudies, workIntro } from "@/content/work";
 import { PageHero } from "@/components/PageHero";
 import { CtaBand } from "@/components/CtaBand";
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: seo.work.title,
   description: seo.work.description,
   alternates: { canonical: "/work" },
-  openGraph: { title: seo.work.title, description: seo.work.description, url: "/work" },
+  openGraph: { ...baseOpenGraph, title: seo.work.title, description: seo.work.description, url: "/work" },
 };
 
 export default function WorkPage() {

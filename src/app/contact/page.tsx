@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { seo } from "@/content/seo";
+import { baseOpenGraph, seo } from "@/content/seo";
 import { site, addressText, phoneHref, whatsappHref } from "@/content/site";
 import { PageHero } from "@/components/PageHero";
 import { ContactForm } from "@/components/contact/ContactForm";
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   title: seo.contact.title,
   description: seo.contact.description,
   alternates: { canonical: "/contact" },
-  openGraph: { title: seo.contact.title, description: seo.contact.description, url: "/contact" },
+  openGraph: { ...baseOpenGraph, title: seo.contact.title, description: seo.contact.description, url: "/contact" },
 };
 
 export default function ContactPage() {

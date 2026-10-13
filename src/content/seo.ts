@@ -38,3 +38,9 @@ export const seo = {
     description: "What the Acceleret contact form collects, how it is used, and how to ask for deletion.",
   },
 } as const;
+
+/**
+ * Metadata merges shallowly, so a page that sets `openGraph` drops the root
+ * layout's fields. Every page spreads this first to keep them.
+ */
+export const baseOpenGraph = { siteName: "Acceleret", locale: "en_IN", type: "website" } as const;

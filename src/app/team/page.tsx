@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { seo } from "@/content/seo";
+import { baseOpenGraph, seo } from "@/content/seo";
 import { site } from "@/content/site";
 import { mergerLine } from "@/content/team";
 import { PageHero } from "@/components/PageHero";
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: seo.team.title,
   description: seo.team.description,
   alternates: { canonical: "/team" },
-  openGraph: { title: seo.team.title, description: seo.team.description, url: "/team" },
+  openGraph: { ...baseOpenGraph, title: seo.team.title, description: seo.team.description, url: "/team" },
 };
 
 export default function TeamPage() {

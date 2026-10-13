@@ -49,3 +49,29 @@ export function localBusinessJsonLd() {
     ...(sameAs().length ? { sameAs: sameAs() } : {}),
   };
 }
+
+/** schema.org WebSite, on Home: names the site for search results. */
+export function websiteJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: site.name,
+    url: site.url,
+    inLanguage: "en-IN",
+    publisher: { "@type": "Organization", name: site.name, url: site.url },
+  };
+}
+
+/** schema.org BreadcrumbList. `trail` runs from the top level down; Home is added first. */
+export function breadcrumbJsonLd(trail: { name: string; path: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [{ name: "Home", path: "" }, ...trail].map((t, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: t.name,
+      item: `${site.url}${t.path}`,
+    })),
+  };
+}

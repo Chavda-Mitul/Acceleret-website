@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { seo } from "@/content/seo";
+import { baseOpenGraph, seo } from "@/content/seo";
 import { processIntro, stages, whyThisWay } from "@/content/process";
 import { PageHero } from "@/components/PageHero";
 import { CtaBand } from "@/components/CtaBand";
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   title: seo.howWeWork.title,
   description: seo.howWeWork.description,
   alternates: { canonical: "/how-we-work" },
-  openGraph: { title: seo.howWeWork.title, description: seo.howWeWork.description, url: "/how-we-work" },
+  openGraph: { ...baseOpenGraph, title: seo.howWeWork.title, description: seo.howWeWork.description, url: "/how-we-work" },
 };
 
 // Short asides per stage, each a phrase from the brief's stage copy.

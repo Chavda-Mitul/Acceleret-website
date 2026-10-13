@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { seo } from "@/content/seo";
+import { baseOpenGraph, seo } from "@/content/seo";
 import { Hero } from "@/components/home/Hero";
 import { ProblemScene } from "@/components/home/ProblemScene";
 import { TaglineBand } from "@/components/home/TaglineBand";
@@ -14,13 +14,13 @@ import { stages, type StageId } from "@/content/process";
 import { Work } from "@/components/home/Work";
 import { CtaBand } from "@/components/CtaBand";
 import { JsonLd } from "@/components/JsonLd";
-import { organizationJsonLd } from "@/lib/schema";
+import { organizationJsonLd, websiteJsonLd } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: seo.home.title,
   description: seo.home.description,
   alternates: { canonical: "/" },
-  openGraph: { title: seo.home.title, description: seo.home.description, url: "/" },
+  openGraph: { ...baseOpenGraph, title: seo.home.title, description: seo.home.description, url: "/" },
 };
 
 // Server-rendered once; the client sections only move between / reveal them.
@@ -36,6 +36,7 @@ export default function HomePage() {
   return (
     <>
       <JsonLd data={organizationJsonLd()} />
+      <JsonLd data={websiteJsonLd()} />
       <Hero />
       <ProblemScene />
       <TaglineBand />

@@ -2,12 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
+import { baseOpenGraph } from "@/content/seo";
 import { caseStudies, getCaseStudy } from "@/content/work";
 import { CtaBand } from "@/components/CtaBand";
 import { Spine } from "@/components/motion/Spine";
 import { InView } from "@/components/motion/InView";
 import { SplitHeading } from "@/components/motion/SplitHeading";
 import { Reveal } from "@/components/motion/Reveal";
+import { JsonLd } from "@/components/JsonLd";
+import { breadcrumbJsonLd } from "@/lib/schema";
 
 export function generateStaticParams() {
   return caseStudies.map((c) => ({ slug: c.slug }));
@@ -22,7 +25,7 @@ export async function generateMetadata(props: PageProps<"/work/[slug]">): Promis
     title,
     description: `${c.client}: ${c.result}`,
     alternates: { canonical: `/work/${c.slug}` },
-    openGraph: { title, description: c.result, url: `/work/${c.slug}`, type: "article" },
+    openGraph: { ...baseOpenGraph, title, description: c.result, url: `/work/${c.slug}`, type: "article" },
     // Sample case studies exist only to review the layout; keep them out of search.
     robots: c.sample ? { index: false, follow: true } : undefined,
   };
@@ -71,6 +74,12 @@ async function CaseBody({ params }: { params: PageProps<"/work/[slug]">["params"
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Work", path: "/work" },
+          { name: c.title, path: `/work/${c.slug}` },
+        ])}
+      />
       {c.sample ? (
         <p className="case__sample" role="note">
           <span className="pending-tag">Sample</span> Layout preview with placeholder text. The founders&apos; case
