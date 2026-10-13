@@ -18,6 +18,7 @@ export const site = {
     { label: "How we work", href: "/how-we-work" },
     { label: "Products", href: "/products" },
     { label: "Work", href: "/work" },
+    { label: "Blog", href: "/blog" },
     { label: "Contact", href: "/contact" },
   ] satisfies NavItem[],
 
@@ -25,6 +26,7 @@ export const site = {
     { label: "How we work", href: "/how-we-work" },
     { label: "Work", href: "/work" },
     { label: "Who we are", href: "/team" },
+    { label: "Blog", href: "/blog" },
     { label: "Contact", href: "/contact" },
     { label: "Privacy", href: "/privacy" },
   ] satisfies NavItem[],

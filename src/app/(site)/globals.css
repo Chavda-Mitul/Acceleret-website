@@ -1,12 +1,13 @@
 @import "tailwindcss";
-@import "../styles/base.css";
-@import "../styles/chrome.css";
-@import "../styles/hero.css";
-@import "../styles/home.css";
-@import "../styles/pages.css";
-@import "../styles/scenes.css";
-@import "../styles/pencil.css";
-@import "../styles/art.css";
+@import "../../styles/base.css";
+@import "../../styles/chrome.css";
+@import "../../styles/hero.css";
+@import "../../styles/home.css";
+@import "../../styles/pages.css";
+@import "../../styles/scenes.css";
+@import "../../styles/pencil.css";
+@import "../../styles/art.css";
+@import "../../styles/blog.css";
 
 @theme inline {
   --color-paper: var(--paper);

@@ -34,7 +34,7 @@ export function localBusinessJsonLd() {
     "@type": "ProfessionalService",
     name: site.name,
     url: `${site.url}/contact`,
-    image: `${site.url}/opengraph-image`,
+    image: `${site.url}/logo.svg`,
     description: seo.contact.description,
     email: contact.email,
     ...(contact.phone ? { telephone: contact.phone } : {}),
@@ -72,6 +72,52 @@ export function breadcrumbJsonLd(trail: { name: string; path: string }[]) {
       position: i + 1,
       name: t.name,
       item: `${site.url}${t.path}`,
+    })),
+  };
+}
+
+/** schema.org BlogPosting, on each article. Dates and image come from the CMS. */
+export function blogPostingJsonLd(post: {
+  title: string;
+  description: string;
+  path: string;
+  publishedAt?: string | null;
+  modifiedAt: string;
+  author?: string | null;
+  image?: string | null;
+  section?: string | null;
+  tags?: string[] | null;
+}) {
+  const url = `${site.url}${post.path}`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.description,
+    url,
+    mainEntityOfPage: { "@type": "WebPage", "@id": url },
+    ...(post.publishedAt ? { datePublished: post.publishedAt } : {}),
+    dateModified: post.modifiedAt,
+    author: post.author
+      ? { "@type": "Person", name: post.author }
+      : { "@type": "Organization", name: site.name, url: site.url },
+    publisher: { "@type": "Organization", name: site.name, url: site.url, logo: `${site.url}/logo.svg` },
+    ...(post.image ? { image: post.image } : {}),
+    ...(post.section ? { articleSection: post.section } : {}),
+    ...(post.tags?.length ? { keywords: post.tags.join(", ") } : {}),
+    inLanguage: "en-IN",
+  };
+}
+
+/** schema.org FAQPage, from the FAQ blocks in an article. */
+export function faqJsonLd(items: { question: string; answer: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((i) => ({
+      "@type": "Question",
+      name: i.question,
+      acceptedAnswer: { "@type": "Answer", text: i.answer },
     })),
   };
 }

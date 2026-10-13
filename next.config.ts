@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withPayload } from "@payloadcms/next/withPayload";
 
 const isProd = process.env.NODE_ENV === "production";
 
@@ -34,6 +35,10 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   poweredByHeader: false,
+  // Blog images are served by Payload from /api/media/file (src/collections/Media.ts).
+  images: {
+    localPatterns: [{ pathname: "/api/media/file/**" }],
+  },
   turbopack: {
     rules: {
       "*.css": {
@@ -43,7 +48,12 @@ const nextConfig: NextConfig = {
     },
   },
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      // The CMS (src/app/(payload)) stays out of search results; blog images under /api/media/file do not.
+      { source: "/admin/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
+      { source: "/api/:path((?!media/file/).*)", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
+    ];
   },
   /*
    * Domain rules from the brief (§2): acceleret.com is canonical,
@@ -69,4 +79,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withPayload(nextConfig, { devBundleServerPackages: false });

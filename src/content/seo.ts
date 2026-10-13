@@ -33,6 +33,12 @@ export const seo = {
     description: "Book a 30-minute operations walkthrough with Acceleret in Surat.",
   },
   /** Not supplied in the brief; written to match. Founders to confirm. */
+  blog: {
+    title: "Blog | Acceleret",
+    description:
+      "Practical writing on CRM, ERP, workflow automation and custom software for growing businesses, from the Acceleret team in Surat.",
+  },
+  /** Not supplied in the brief; written to match. Founders to confirm. */
   privacy: {
     title: "Privacy | Acceleret",
     description: "What the Acceleret contact form collects, how it is used, and how to ask for deletion.",

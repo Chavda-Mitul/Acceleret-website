@@ -3,13 +3,24 @@
 The Acceleret website, built from `../08-website-brief-acceleret-com.md` (with
 `../Innodify-Website-Inventory.md` as background on the service offering).
 Next.js 16 (App Router, Cache Components), React 19, TypeScript, Tailwind CSS 4.
-Every page is prerendered as static HTML; the only server code is the contact form.
+Every page is prerendered as static HTML. The server code is the contact form and the blog CMS
+(Payload 3 at `/admin`, Postgres), which refreshes blog pages whenever an article changes.
 
 ## Run it
 
+The blog needs a Postgres database. Locally, Docker is the quickest:
+
+```bash
+docker run -d --name acceleret-blog-pg -e POSTGRES_USER=acceleret -e POSTGRES_PASSWORD=acceleret   -e POSTGRES_DB=acceleret -p 5433:5432 postgres:17-alpine
+```
+
+Then copy `.env.example` to `.env.local` and set `PAYLOAD_SECRET` and
+`DATABASE_URI=postgres://acceleret:acceleret@localhost:5433/acceleret`.
+
 ```bash
 npm install
-npm run dev          # http://localhost:3000
+npm run dev          # http://localhost:3000, CMS at /admin (first visit creates the admin user)
+npm run seed:blog    # optional: an example draft article that uses every editor feature
 npm run build        # production build
 npm start            # serve the production build
 npm run typecheck    # route types + TypeScript
@@ -17,6 +28,13 @@ npm run lint
 npm run test:e2e     # Playwright, against a production build (run `npm run build` first)
 npm run check        # all of the above in order
 ```
+
+`npm run build` reads the published articles, so it needs `DATABASE_URI` too. In development the
+database schema follows the collections automatically. After changing a collection, run
+`npm run migrate:create <name>` and commit the file in `src/migrations/`; deploys apply it with
+`npm run migrate` (part of `vercel-build`). Run `npm run generate:types` to refresh `src/payload-types.ts`.
+
+If a newly added CSS file doesn't show up in `npm run dev`, stop the server and delete `.next/dev`.
 
 Playwright uses the Chrome installed on the machine (`channel: "chrome"`), so no browser download is needed.
 
@@ -56,15 +74,21 @@ Everything on the site is first drawn by hand, then built, which is Acceleret's 
 
 ## Pages
 
+The site lives in the `src/app/(site)/` route group and the CMS in `src/app/(payload)/`. Each has its own
+root layout; the folder names in brackets don't appear in URLs.
+
 | URL | File |
 | --- | --- |
-| `/` | `src/app/page.tsx` (sections in `src/components/home/`) |
-| `/services` | `src/app/services/page.tsx` |
-| `/how-we-work` | `src/app/how-we-work/page.tsx` |
-| `/products` | `src/app/products/page.tsx` |
-| `/work`, `/work/<slug>` | `src/app/work/` |
-| `/contact` | `src/app/contact/` (server action in `actions.ts`, shared checks in `validation.ts`) |
-| `/privacy` | `src/app/privacy/page.tsx` |
+| `/` | `src/app/(site)/page.tsx` (sections in `src/components/home/`) |
+| `/services` | `src/app/(site)/services/page.tsx` |
+| `/how-we-work` | `src/app/(site)/how-we-work/page.tsx` |
+| `/products` | `src/app/(site)/products/page.tsx` |
+| `/work`, `/work/<slug>` | `src/app/(site)/work/` |
+| `/blog`, `/blog/<slug>`, `/blog/category/<slug>`, `/blog/rss.xml` | `src/app/(site)/blog/` (data in `src/lib/blog.ts`) |
+| `/team` | `src/app/(site)/team/page.tsx` |
+| `/contact` | `src/app/(site)/contact/` (server action in `actions.ts`, shared checks in `validation.ts`) |
+| `/privacy` | `src/app/(site)/privacy/page.tsx` |
+| `/admin` | Payload CMS (`src/payload.config.ts`, collections in `src/collections/`) |
 
 ## Editing content (for Media)
 
@@ -104,13 +128,13 @@ marker at each gap when reviewing the site with the founders.
 - Founder photos; partner's name, line and photo; the merger line from "File 02" (`team.ts`).
 - Travel CRM name, logo and link (`products.ts`).
 - Brand kit: logo, colours, fonts (see below).
-- Privacy policy wording: drafted plainly; items marked "Confirm" need a decision (`src/app/privacy/page.tsx`).
+- Privacy policy wording: drafted plainly; items marked "Confirm" need a decision (`src/app/(site)/privacy/page.tsx`).
 
 ## Brand kit swap
 
 - **Colours, spacing, type scale:** `src/styles/base.css` (`:root` tokens).
-- **Fonts:** `src/app/layout.tsx` (Anek Latin + Kalam via `next/font`, self-hosted at build time).
-- **Logo:** `src/components/chrome/Logo.tsx`, `src/app/icon.svg`, `public/icon.svg`, `src/app/apple-icon.tsx`.
+- **Fonts:** `src/app/(site)/layout.tsx` (Anek Latin + Kalam via `next/font`, self-hosted at build time).
+- **Logo:** `src/components/chrome/Logo.tsx`, `src/app/icon.svg`, `src/app/apple-icon.tsx`.
 - **Share images:** `src/lib/og.tsx`.
 
 ## Motion
@@ -184,10 +208,37 @@ Delivery (`src/lib/leads.ts`), configured in `.env.example`:
 If nothing is configured in production, the visitor sees the email/WhatsApp fallback rather than a false
 "thank you". **Set at least one channel before launch.**
 
+## Blog
+
+Articles are written in the CMS at `/admin`. The guide for whoever writes them is
+[`docs/blog-editing.md`](docs/blog-editing.md).
+
+- **Collections** (`src/collections/`): Posts (drafts, autosave, version history), Categories, Media
+  (images, alt text required, resized to card / content / share sizes) and Users (who can sign in).
+- **Editor** (`src/collections/editor.ts`): headings H2–H4, bold, italic, underline, strikethrough,
+  sub/superscript, inline code, links (to other articles or any URL, optional new tab and nofollow),
+  bulleted, numbered and check lists, quotes, alignment, indent, divider, images with captions,
+  tables, and three blocks: Callout, FAQ and Call to action. Each renders through
+  `src/components/blog/RichText.tsx` and is styled in `src/styles/blog.css`. In articles, bold shows as
+  a highlighter mark at regular weight, keeping the site's no-bold rule.
+- **SEO per article** (the SEO tab): search title, description, share image with a live Google preview,
+  canonical URL for articles first published elsewhere, and a "hide from search engines" switch. The
+  site adds `BlogPosting`, `BreadcrumbList` and, when there is an FAQ block, `FAQPage` structured data;
+  the article goes into `sitemap.xml` (with its last-edit date) and `/blog/rss.xml`.
+- **Freshness:** blog queries are cached and tagged; saving, publishing or deleting anything in the CMS
+  expires the tag (`src/collections/revalidate.ts`), so the change is live on the next page view with no
+  redeploy.
+- **Images** are served by Payload from `/api/media/file/…`, stored in Vercel Blob when
+  `BLOB_READ_WRITE_TOKEN` is set, otherwise in `media/` (only on a server with a writable disk).
+- The CMS sends no email (no adapter configured), so a forgotten password is reset by another admin
+  under Users, or by adding an email adapter to `src/payload.config.ts`.
+
 ## SEO and technical
 
 - Titles and descriptions exactly as in the brief, canonical URLs, an Open Graph image per page.
-- `sitemap.xml`, `robots.txt`, schema.org `Organization` on Home and `ProfessionalService` (LocalBusiness) on Contact.
+- `sitemap.xml`, `robots.txt` (keeps `/admin` and the CMS API out; blog images stay crawlable).
+- schema.org `Organization` and `WebSite` on Home, `ProfessionalService` (LocalBusiness) on Contact,
+  `BreadcrumbList` on case studies and blog pages, `BlogPosting` / `FAQPage` on articles.
 - GA4 loads only when `NEXT_PUBLIC_GA_ID` is set; Search Console via `GOOGLE_SITE_VERIFICATION`.
 - Security headers (HSTS, CSP, frame, referrer, permissions) in `next.config.ts`.
 - `acceleret.in/*` and `www.acceleret.com/*` 301 to `https://acceleret.com/*` (also do this at DNS/host level).
@@ -195,7 +246,13 @@ If nothing is configured in production, the visitor sees the email/WhatsApp fall
 ## Launch checklist (hosting)
 
 - Point `acceleret.com` at the host; redirect `www` and `acceleret.in` (rules are in `next.config.ts` too).
-- Set the environment variables from `.env.example`, at least one contact-form channel.
+- Create the Postgres database (on Vercel: Storage › Neon) and, on Vercel, a Blob store for images.
+- Set the environment variables from `.env.example`: `PAYLOAD_SECRET`, `DATABASE_URI`,
+  `BLOB_READ_WRITE_TOKEN` (Vercel), and at least one contact-form channel.
+- Build with `npm run vercel-build`: it applies database migrations, then builds. Vercel runs it
+  automatically; elsewhere, use it as the build command.
+- Open `https://acceleret.com/admin` straight after the first deploy and create the admin account.
+  Until someone does, anyone who finds `/admin` could.
 - Verify Search Console and submit `https://acceleret.com/sitemap.xml`.
 - Reserve `careers.acceleret.com` in DNS. Turn on daily backups at the host. SSL comes from the host.
 - Fill the `PENDING` placeholders (turn on `site.showPending` to see where they are).
