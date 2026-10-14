@@ -1,4 +1,4 @@
-# acceleret.com (V2)
+# acceleret.com
 
 The Acceleret website, built from `../08-website-brief-acceleret-com.md` (with
 `../Innodify-Website-Inventory.md` as background on the service offering).
