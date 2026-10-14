@@ -1,5 +1,11 @@
 # Deploying to a VPS
 
+> **VPS1 setup, 2026-10-14:** the existing shared server uses the isolated Docker
+> release process documented in [knowledge-base/deployment.md](../knowledge-base/deployment.md)
+> and [CI/CD](../knowledge-base/ci-cd.md). The blank-server guide below is historical;
+> do not run its package upgrades, firewall changes, removals or PM2 commands on VPS1.
+> See [active-context.md](../knowledge-base/active-context.md) for verified launch status.
+
 How to put acceleret.com on your own server, from an empty Ubuntu machine to
 the live site. Written for Ubuntu 24.04. Each step is a command you can paste.
 
