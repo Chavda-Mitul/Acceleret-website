@@ -114,7 +114,7 @@
   stroke-width: 2.25;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-dasharray: 1;
+  stroke-dasharray: 1 2;
   stroke-dashoffset: 1;
 }
 .hs-lines[data-phase="built"] .hs-route {
@@ -196,7 +196,7 @@
   fill: none;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-dasharray: 1;
+  stroke-dasharray: 1 2;
   stroke-dashoffset: 1;
   transition:
     stroke-dashoffset 0.95s var(--ease-in-out),

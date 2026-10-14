@@ -502,7 +502,7 @@ html[data-motion="calm"] .spine__line,
   stroke: #8f98ab;
   stroke-width: 1.7;
   stroke-linecap: round;
-  stroke-dasharray: 1;
+  stroke-dasharray: 1 2;
   stroke-dashoffset: 1;
   transition: stroke-dashoffset 0.9s var(--ease-in-out) calc(var(--k) * 70ms);
 }
@@ -580,7 +580,7 @@ html[data-motion="calm"] .spine__line,
   stroke: var(--ink-3);
   stroke-width: 2;
   stroke-linecap: round;
-  stroke-dasharray: 1;
+  stroke-dasharray: 1 2;
   stroke-dashoffset: 1;
   transition:
     stroke-dashoffset 0.6s var(--ease-in-out) calc(var(--k) * 120ms + 0.2s),
@@ -642,7 +642,7 @@ html[data-motion="calm"] .spine__line,
   fill: none;
   stroke: var(--electric);
   stroke-width: 2;
-  stroke-dasharray: 1;
+  stroke-dasharray: 1 2;
   stroke-dashoffset: 1;
   transition: stroke-dashoffset 0.6s var(--ease-in-out) 0.3s;
 }
@@ -902,7 +902,7 @@ html[data-motion="calm"] .spine__line,
 .eng .eng-pulse {
   stroke: var(--electric);
   stroke-width: 1.8;
-  stroke-dasharray: 1;
+  stroke-dasharray: 1 2;
 }
 .eng .eng-live {
   fill: var(--electric);

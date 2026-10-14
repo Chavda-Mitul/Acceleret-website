@@ -356,7 +356,7 @@ svg {
    when motion is reduced. */
 
 .draw {
-  stroke-dasharray: 1;
+  stroke-dasharray: 1 2;
   stroke-dashoffset: 1;
 }
 [data-inview="true"] .draw,
