@@ -3,7 +3,6 @@ import { fileURLToPath } from "url";
 import { buildConfig } from "payload";
 import { postgresAdapter } from "@payloadcms/db-postgres";
 import { seoPlugin } from "@payloadcms/plugin-seo";
-import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
 import sharp from "sharp";
 import { site } from "./content/site";
 import { Users } from "./collections/Users";
@@ -17,9 +16,8 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 /**
  * The blog CMS, served at /admin.
  *
- * Postgres holds the content (DATABASE_URI). Images go to Vercel Blob when
- * BLOB_READ_WRITE_TOKEN is set, otherwise to the local `media/` folder,
- * which only works on a host with a writable disk.
+ * Postgres holds the content (DATABASE_URI). Uploaded images are stored in the
+ * `media/` folder on the server, so that folder must persist across deploys.
  */
 export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || "",
@@ -35,7 +33,7 @@ export default buildConfig({
   db: postgresAdapter({
     pool: { connectionString: process.env.DATABASE_URI || "" },
     // Development syncs the schema directly. Production applies src/migrations
-    // once, before the build (`npm run migrate`, run by `vercel-build`).
+    // once, before the build (`npm run migrate`, run by `build:prod`).
   }),
   graphQL: { disable: true },
   sharp,
@@ -65,11 +63,6 @@ export default buildConfig({
           defaultValue: false,
         },
       ],
-    }),
-    vercelBlobStorage({
-      enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
-      collections: { media: true },
-      token: process.env.BLOB_READ_WRITE_TOKEN,
     }),
   ],
 });

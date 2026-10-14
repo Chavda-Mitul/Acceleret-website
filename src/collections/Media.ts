@@ -7,7 +7,7 @@ export const Media: CollectionConfig = {
   access: { read: () => true },
   admin: { group: "Blog" },
   upload: {
-    // Without Vercel Blob (see payload.config.ts) files land here; needs a writable disk.
+    // Uploads are stored on the server's disk; keep this folder across deploys.
     staticDir: "media",
     mimeTypes: ["image/png", "image/jpeg", "image/webp", "image/avif", "image/gif", "image/svg+xml"],
     focalPoint: true,
