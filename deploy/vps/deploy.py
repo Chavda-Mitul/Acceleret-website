@@ -99,6 +99,24 @@ def probe(port):
                 raise RuntimeError(f'Health check failed: {route}')
 
 
+def wait_public(sha, runner=run, pause=time.sleep):
+    # Nginx's reload command returns before replacement workers accept requests.
+    for attempt in range(15):
+        try:
+            result = runner(
+                'curl', '--fail', '--silent', '--show-error', '--max-time', '30',
+                '--resolve', 'acceleret.com:443:127.0.0.1', '-D', '-', '-o', '/dev/null',
+                'https://acceleret.com/', capture_output=True, text=True,
+            )
+            if f'x-acceleret-release: {sha}' in result.stdout.lower().splitlines():
+                return
+        except subprocess.CalledProcessError:
+            pass
+        if attempt < 14:
+            pause(2)
+    raise RuntimeError('HTTPS did not serve the expected release after Nginx reload')
+
+
 def backup():
     stamp = dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%SZ') + '-' + uuid.uuid4().hex[:8]
     target = BASE / 'backups' / stamp
@@ -197,8 +215,7 @@ def deploy(sha):
         if sha != main_sha():
             raise RuntimeError('main changed during build; candidate retained without promotion')
         previous_proxy = promote(upstream, proxy_config(port, sha))
-        run('curl', '--fail', '--silent', '--show-error', '--max-time', '30',
-            '--resolve', 'acceleret.com:443:127.0.0.1', 'https://acceleret.com/', stdout=subprocess.DEVNULL)
+        wait_public(sha)
         state = {'sha': sha, 'container': container, 'port': port, 'release': str(release), 'previous': current}
         if current:
             (BASE / 'history' / f'{release_id}.json').write_text(json.dumps(current, indent=2))
@@ -209,11 +226,11 @@ def deploy(sha):
         if previous_proxy is not None:
             promote(upstream, previous_proxy)
         run('docker', 'update', '--restart=no', container)
-        run('docker', 'stop', '--time', '30', container)
+        run('docker', 'stop', '--timeout', '30', container)
         raise
     if current:
         run('docker', 'update', '--restart=no', current['container'])
-        run('docker', 'stop', '--time', '30', current['container'])
+        run('docker', 'stop', '--timeout', '30', current['container'])
     print(f'Deployed {sha} on acceleret.com; previous files and containers retained.', flush=True)
 
 

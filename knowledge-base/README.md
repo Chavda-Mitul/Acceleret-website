@@ -6,8 +6,8 @@
 |---|---|
 | Language | TypeScript |
 | Framework | Next.js 16.4.0, React 19.3.0, Payload 3.90.2 |
-| Database | PostgreSQL via @payloadcms/db-postgres |
-| Hosting | VPS1, Ubuntu 24.04; deployment being configured |
+| Database | Isolated PostgreSQL 17 via @payloadcms/db-postgres |
+| Hosting | VPS1, Ubuntu 24.04, Docker and Nginx; live over HTTPS |
 | Auth | Payload users at /admin |
 | Test Runner | Playwright 1.64, desktop and 360px mobile Chrome |
 
@@ -51,3 +51,4 @@
 | architecture.md | Before changing execution or persistence |
 | deployment.md | VPS1 operations, storage, backups and recovery |
 | ci-cd.md | GitHub checks and production deployment |
+| security.md | CMS bootstrap, HTTPS session cookies and deployment credentials |

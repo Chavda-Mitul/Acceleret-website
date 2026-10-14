@@ -20,14 +20,16 @@ VPS1 hosts the supplied Next.js/Payload application behind its existing Nginx, u
 ## Conventions and rules
 The deployment helper accepts only `deploy <full 40-character SHA>`, `status`, or `backup`. Deployment verifies that the SHA is the current remote main commit both before building and before promotion. It validates archive paths, rejects symlinks/special files, saves a backup before migrations, then installs dependencies and builds in a restricted container. Only the first release imports the seven existing case studies; the example blog seed is never run in production.
 
-The app alternates loopback ports 3210 and 3211. Nginx switches only after public-page and database API checks, a private first-admin bootstrap, and Nginx syntax validation. A failed proxy promotion restores the previous proxy configuration. A failed public HTTPS check also restores it. Previous files and stopped containers are retained; no automatic file/image/backup deletion is configured.
+The app alternates loopback ports 3210 and 3211. Nginx switches only after public-page and database API checks, a private first-admin bootstrap, and Nginx syntax validation. After signalling reload, the helper waits for HTTP success and the exact new X-Acceleret-Release header, since old workers can still serve briefly. A failed proxy promotion or exhausted HTTPS verification restores the previous proxy configuration. Previous files and stopped containers are retained; no automatic file/image/backup deletion is configured.
 
 Node is pinned by the official node:22.23.2-bookworm-slim image digest captured at provisioning. Build containers have 1 CPU and 2 GiB RAM (3 GiB including swap); runtime has 1 CPU and 768 MiB RAM. PostgreSQL has 0.25 CPU and 256 MiB RAM. Container logs rotate at three 10 MiB files. The app cannot access the Docker socket or host secrets directory.
 
-DNS is an A record for @ to 195.35.6.248, TTL 300; the existing www CNAME points to acceleret.com. Existing mail records and service subdomains must remain unchanged. Only acceleret.com and www.acceleret.com are in this task's domain scope. acceleret.in is not provisioned by this deployment.
+DNS is an A record for @ to 195.35.6.248; the owner added it during launch and the observed TTL is 14400. The existing www CNAME points to acceleret.com. Existing mail records and service subdomains remain outside the write scope. Only acceleret.com and www.acceleret.com are in this task's domain scope. acceleret.in is not provisioned by this deployment.
 
 ## Backups and recovery
 `sudo /usr/local/sbin/acceleret-deploy backup` saves a PostgreSQL custom-format dump and uploads/contact files. The systemd timer `acceleret-backup.timer` runs around 03:00 IST (21:30 UTC) with up to five minutes of jitter. Backups are root-private and retained. Copy them off-host; server-local backups alone do not cover host loss.
+
+An initial post-launch backup was privately copied to the owner's PC on 2026-10-14. pg_restore successfully read the database archive manifest. This establishes archive readability, not a destructive database restore drill. Continue making off-host copies under an approved retention/storage plan.
 
 To inspect the current release as the deployment account: `ssh acceleret-deploy@195.35.6.248 status`. General shell access is rejected. The operator's existing root SSH access is separate.
 
@@ -43,7 +45,7 @@ For manual application rollback, an operator must inspect current.json and the m
 - Existing unrelated Nginx protocol/OCSP warnings predate this change; successful nginx -t is required.
 
 ## How it is tested
-`python -m unittest discover -s deploy/vps -p '*_test.py' -v` covers command rejection, archive containment, port alternation, proxy validation and rollback. Python compilation and shell syntax checks cover the installed helpers. Deployment verification additionally requires actual database migration, bootstrapped admin, case-study content/media, HTTPS, redirects, contact persistence, and a before/after comparison of unrelated containers. See active-context.md for observed launch results; this document is not itself proof of live qualification.
+`python -m unittest discover -s deploy/vps -p '*_test.py' -v` covers command rejection, archive containment, port alternation, proxy validation/rollback and waiting for the exact HTTPS release. Python compilation and shell syntax checks cover the installed helpers. Live verification observed all nine public pages, seven case-study pages and original covers, administrator login and denied unauthenticated creation, HTTPS redirects, 404, robots/sitemap, and one labelled contact receipt in persistent storage. All 58 pre-existing containers retain their IDs, start times, images, configuration hashes and running states. See active-context.md for release identity and CI status.
 
 ## Related documentation
-[CI/CD](ci-cd.md), [Architecture](architecture.md), [Testing](testing.md), [Known issues](known-issues.md).
+[CI/CD](ci-cd.md), [Architecture](architecture.md), [Security](security.md), [Testing](testing.md), [Known issues](known-issues.md).

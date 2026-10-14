@@ -29,3 +29,11 @@
 **Decision**: Create a dedicated key/account with OpenSSH restrict and a forced command; the root-owned helper accepts only current-main SHA deployments, status and backups. Pin the known server key in GitHub.
 **Alternatives Considered**: Reusing the operator root key or adding the account to the Docker group would grant broad host control.
 **Consequences**: The app release can update itself within its container and database scope, while changes to the root helper require operator review/install.
+
+## Decision: Enforce production session-cookie flags at TLS termination
+**Date**: 2026-10-14
+**Status**: Accepted
+**Context**: Real CMS login returned an HttpOnly cookie without Secure under the supplied Payload defaults. Nginx terminates HTTPS for this deployment.
+**Decision**: Apply Secure, HttpOnly and SameSite=Lax to payload-token in the exact site's Nginx proxy and verify the real response.
+**Alternatives Considered**: Changing shared Payload authentication configuration would also affect local HTTP development and is unnecessary for this hosting change.
+**Consequences**: Production sessions gain HTTPS transport protection without changing the application's auth model or local development behavior.

@@ -85,6 +85,40 @@ class DeploymentTests(unittest.TestCase):
             self.assertEqual(upstream.read_text(), 'old')
             self.assertEqual(calls[-1], ('systemctl', 'reload', 'nginx'))
 
+    def test_waits_for_reloaded_workers_after_a_maintenance_response(self):
+        calls = []
+        pauses = []
+        sha = 'a' * 40
+
+        def runner(*args, **kwargs):
+            calls.append(args)
+            if len(calls) == 1:
+                raise subprocess.CalledProcessError(22, args)
+            return subprocess.CompletedProcess(args, 0, f'HTTP/2 200\nX-Acceleret-Release: {sha}\n')
+
+        deploy.wait_public(sha, runner, pauses.append)
+        self.assertEqual(len(calls), 2)
+        self.assertEqual(pauses, [2])
+
+    def test_does_not_accept_a_healthy_previous_release_as_the_new_release(self):
+        calls = []
+        sha = 'a' * 40
+
+        def runner(*args, **kwargs):
+            calls.append(args)
+            served = 'b' * 40 if len(calls) == 1 else sha
+            return subprocess.CompletedProcess(args, 0, f'X-Acceleret-Release: {served}\n')
+
+        deploy.wait_public(sha, runner, lambda _: None)
+        self.assertEqual(len(calls), 2)
+
+    def test_fails_when_the_new_release_never_appears(self):
+        def runner(*args, **kwargs):
+            return subprocess.CompletedProcess(args, 0, 'HTTP/2 200\n')
+
+        with self.assertRaisesRegex(RuntimeError, 'expected release'):
+            deploy.wait_public('a' * 40, runner, lambda _: None)
+
 
 if __name__ == '__main__':
     unittest.main()

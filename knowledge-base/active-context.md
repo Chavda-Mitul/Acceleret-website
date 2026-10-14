@@ -1,25 +1,26 @@
 ## Current Status
 **Last Updated**: 2026-10-14
-**Last Agent Session**: Prepared isolated VPS1 hosting and GitHub CI/CD; awaiting DNS write and PR validation.
-**Test Suite Status**: Baseline typecheck, lint, migrations, production build and full browser suite pass (87 passed, nine intentional skips). Seven deployment regression tests and actionlint pass. Final fixture/GitHub checks in progress.
+**Last Agent Session**: Launched acceleret.com on VPS1, verified public/CMS/contact behavior and prepared owner-merge CI/CD PR #13.
+**Test Suite Status**: Local and GitHub typecheck/lint/migrations/build pass; full browser suite 87 passed with nine intentional skips. Ten deployment regressions, Python compilation, shell syntax, actionlint and live HTTP/browser checks pass. The PR reruns full checks for the final helper changes.
 
 ## In Progress
 - [x] Establish baseline checks and isolated server provisioning.
-- [ ] Complete the production release after DNS and HTTPS are available.
-- [ ] Configure acceleret.com DNS, HTTPS and persistent CMS storage.
-- [ ] Add tested GitHub validation and deployment automation.
+- [x] Deploy the current main SHA 61f6d1c4212ce94fec3f5e4c7078f9b7729dba79 over HTTPS.
+- [x] Configure acceleret.com DNS/HTTPS, persistent uploads/contact storage, private CMS bootstrap and nightly backups.
+- [x] Add GitHub validation and gated main deployment in PR #13.
+- [ ] Owner merge of PR #13 and first GitHub-originated deployment; the initial restricted-SSH deployment already succeeded.
 
 ## Blocked On
-- Hostinger browser automation repeatedly times out. Requested root A record @ -> 195.35.6.248, TTL 300; www already has a CNAME to acceleret.com. No DNS write observed yet.
-- External email delivery credentials have not been supplied; file persistence is configured.
+- External email/webhook delivery credentials have not been supplied. LEADS_FILE=1 persists requests, with an actual receipt verified; no email delivery is claimed.
+- Owner-managed PR merge is the remaining activation step for CI/CD, per docs/go-live.md. PR: https://github.com/Chavda-Mitul/Acceleret-website/pull/13.
 
 ## Decisions Needed
 - Owner-managed PR merge remains the repository's documented process; main auto-deployment starts only after merge.
 
 ## Next Steps (for the next agent session)
-1. Verify DNS, request the acceleret.com/www certificate with the existing certbot account, and install the reviewed HTTPS host.
-2. Deploy the checked current main SHA through the restricted SSH helper and verify public behavior.
-3. Inspect the setup PR checks, update launch evidence, and keep merge/deployment status distinct.
+1. Check PR #13's latest full CI result, then obtain the owner's merge or explicit authorization to merge it.
+2. After merge, inspect the actual Deploy VPS1 job and public X-Acceleret-Release header; do not infer automatic deployment from PR checks alone.
+3. Configure an approved contact email/webhook provider when credentials are available and verify real provider delivery separately.
 
 ## Do Not Touch
 - Other VPS1 containers, data, Nginx hosts and credentials.
