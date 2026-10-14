@@ -79,7 +79,10 @@ test("clicking Read or the card's text opens the case study", async ({ page }) =
   for (const part of [".work-card__read", ".work-card__flow p, .work-card__result"]) {
     await page.goto("/case-studies");
     // A real mouse click at the label's position, so anything covering the link is caught.
-    const box = await page.locator(`.work-card`).first().locator(part).first().boundingBox();
+    const target = page.locator(`.work-card`).first().locator(part).first();
+    // On a phone the label starts below the fold; scroll to it as a visitor would.
+    await target.scrollIntoViewIfNeeded();
+    const box = await target.boundingBox();
     await page.mouse.click(box!.x + box!.width / 2, box!.y + box!.height / 2);
     await expect(page).toHaveURL(new RegExp(`${href}$`));
   }
