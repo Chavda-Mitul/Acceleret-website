@@ -57,6 +57,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`no-js ${anek.variable} ${kalam.variable}`}
       data-motion="full"
+      // base.css scrolls smoothly in full motion; this tells Next to jump instantly
+      // on a page change, so a link lands on its section (or the top), not mid-glide.
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
       <head>
