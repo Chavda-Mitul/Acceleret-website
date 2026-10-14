@@ -36,7 +36,7 @@ export const site = {
   primaryCtaLong: "Book a 30-minute operations walkthrough",
 
   contact: {
-    email: "hello@acceleret.com",
+    email: "support@acceleret.com",
     addressLine: "906/907 International Wealth Center, Vesu VIP Road",
     city: "Surat",
     region: "Gujarat",

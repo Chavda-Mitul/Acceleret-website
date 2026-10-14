@@ -23,7 +23,7 @@ export default function GlobalError({ retry }: { error: Error & { digest?: strin
         <main style={{ maxWidth: "36rem" }}>
           <h1 style={{ fontWeight: 400, fontSize: "2rem", margin: "0 0 1rem" }}>Something broke on our side.</h1>
           <p style={{ margin: "0 0 2rem", lineHeight: 1.5 }}>
-            Try again in a moment. If it keeps happening, write to hello@acceleret.com.
+            Try again in a moment. If it keeps happening, write to support@acceleret.com.
           </p>
           <button
             type="button"

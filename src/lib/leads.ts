@@ -18,7 +18,7 @@ type Stamped = Lead & { receivedAt: string; page: string };
  * that is configured is tried; the request counts as delivered if at least
  * one succeeds.
  *
- * - RESEND_API_KEY        → email to LEADS_TO_EMAIL (default hello@acceleret.com)
+ * - RESEND_API_KEY        → email to LEADS_TO_EMAIL (default support@acceleret.com)
  * - LEADS_WEBHOOK_URL     → JSON POST, e.g. a Google Apps Script that appends to a
  *                           Sheet the founders can see, or an automation that also
  *                           sends the optional WhatsApp notification

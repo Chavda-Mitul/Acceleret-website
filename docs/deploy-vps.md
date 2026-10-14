@@ -92,7 +92,7 @@ DATABASE_URI=postgres://acceleret:CHANGE_ME@localhost:5432/acceleret
 # --- Contact form: at least one of these, or every send fails
 # Option A, email through Resend (resend.com). acceleret.com must be verified there.
 RESEND_API_KEY=
-LEADS_TO_EMAIL=hello@acceleret.com
+LEADS_TO_EMAIL=support@acceleret.com
 LEADS_FROM_EMAIL=Acceleret website <website@acceleret.com>
 # Option B, a webhook such as a Google Sheet (Apps Script) or Make/Zapier
 LEADS_WEBHOOK_URL=
