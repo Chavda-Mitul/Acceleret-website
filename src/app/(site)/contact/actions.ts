@@ -58,7 +58,7 @@ export async function submitWalkthrough(_prev: ContactState, form: FormData): Pr
   if (rateLimited(ip)) {
     return {
       status: "error",
-      message: "We've received several requests from this connection. Email hello@acceleret.com and we'll pick it up from there.",
+      message: "We've received several requests from this connection. Email support@acceleret.com and we'll pick it up from there.",
       errors: {},
       values,
     };
@@ -70,7 +70,7 @@ export async function submitWalkthrough(_prev: ContactState, form: FormData): Pr
     console.error("[contact] delivery failed:", err);
     return {
       status: "error",
-      message: "Your request didn't reach us. Email hello@acceleret.com or message us on WhatsApp, and we'll reply from there.",
+      message: "Your request didn't reach us. Email support@acceleret.com or message us on WhatsApp, and we'll reply from there.",
       errors: {},
       values,
     };
