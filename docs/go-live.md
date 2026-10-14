@@ -9,9 +9,9 @@ is live and section 4 is complete.
 
 ## 1. Code on `main`
 
-- [ ] PR #10 (contact address becomes support@acceleret.com) merged into `main`. Check with
-      `gh pr view 10`. The user merges PRs themselves, with "Squash and merge" on GitHub.
-      Earlier work is already on `main` (PRs #5–#9).
+- [x] All site work merged into `main` (through PR #10, which made support@acceleret.com
+      the contact address). The user merges PRs themselves, with "Squash and merge" on
+      GitHub; the server deploys whatever is on `main`.
 
 ## 2. Outside the server
 
