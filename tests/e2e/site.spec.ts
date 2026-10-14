@@ -54,6 +54,30 @@ test("service tiles link to their anchors on /services", async ({ page }) => {
   await expect(page.locator("#crm h2")).toBeVisible();
 });
 
+test("links from the bottom of a page land on their section, or at the top", async ({ page }) => {
+  const toBottom = () =>
+    page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "instant" }));
+  // Settled: the page has stopped moving after the scroll scenes re-measured (~120 ms in).
+  const settledAt = async (read: () => Promise<number>) => {
+    let last = NaN;
+    await expect.poll(async () => last === (last = await read()), { intervals: [400] }).toBe(true);
+    return last;
+  };
+
+  await page.goto("/how-we-work");
+  await toBottom();
+  await page.locator('.site-footer a[href="/services#erp"]').click();
+  await expect(page).toHaveURL(/\/services#erp$/);
+  const top = await settledAt(() => page.locator("#erp").evaluate((el) => el.getBoundingClientRect().top));
+  expect(top).toBeGreaterThanOrEqual(0);
+  expect(top).toBeLessThan(160);
+
+  await toBottom();
+  await page.getByRole("link", { name: "Book a walkthrough" }).filter({ visible: true }).last().click();
+  await expect(page).toHaveURL(/\/contact$/);
+  expect(await settledAt(() => page.evaluate(() => window.scrollY))).toBe(0);
+});
+
 test("main navigation reaches every page", async ({ page, isMobile }) => {
   test.skip(isMobile, "desktop navigation");
   await page.goto("/");

@@ -45,7 +45,9 @@ function Motion() {
     let tick: ((time: number) => void) | undefined;
     Promise.all([import("lenis"), loadGsap()]).then(([{ default: LenisCtor }, { gsap, ScrollTrigger }]) => {
       if (cancelled) return;
-      lenis = new LenisCtor({ lerp: 0.1, anchors: true, autoRaf: false });
+      // stopInertiaOnNavigate: a glide still running when a link to another page is
+      // clicked would otherwise carry on there and pull it off its section.
+      lenis = new LenisCtor({ lerp: 0.1, anchors: true, autoRaf: false, stopInertiaOnNavigate: true });
       lenis.on("scroll", ScrollTrigger.update);
       tick = (time: number) => lenis?.raf(time * 1000);
       gsap.ticker.add(tick);
