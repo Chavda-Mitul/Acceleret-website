@@ -1,8 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useEffect, useLayoutEffect, useRef, useState, type FormEvent } from "react";
-import { submitWalkthrough, type ContactState } from "@/app/contact/actions";
-import { validateLead, limits, type LeadErrors, type LeadField, type LeadValues } from "@/app/contact/validation";
+import { submitWalkthrough, type ContactState } from "@/app/(site)/contact/actions";
+import { validateLead, limits, type LeadErrors, type LeadField, type LeadValues } from "@/app/(site)/contact/validation";
 import { site, whatsappHref } from "@/content/site";
 import { Note } from "@/components/Note";
 
@@ -235,9 +236,9 @@ function Form({ onSent }: { onSent: () => void }) {
         </button>
         <p id="lead-form-note" className="lead-form__note">
           We use these details only to reply about your walkthrough.{" "}
-          <a className="prose-link" href="/privacy">
+          <Link className="prose-link" href="/privacy">
             Privacy
-          </a>
+          </Link>
         </p>
       </div>
     </form>

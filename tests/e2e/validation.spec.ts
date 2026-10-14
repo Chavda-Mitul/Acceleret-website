@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { validateLead } from "../../src/app/contact/validation";
+import { validateLead } from "../../src/app/(site)/contact/validation";
 
 const valid = {
   name: "Asha Patel",

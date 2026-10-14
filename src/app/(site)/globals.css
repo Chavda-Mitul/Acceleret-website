@@ -1,0 +1,28 @@
+@import "tailwindcss";
+@import "../../styles/base.css";
+@import "../../styles/chrome.css";
+@import "../../styles/hero.css";
+@import "../../styles/home.css";
+@import "../../styles/pages.css";
+@import "../../styles/scenes.css";
+@import "../../styles/pencil.css";
+@import "../../styles/art.css";
+@import "../../styles/blog.css";
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-mist: var(--mist);
+  --color-mist-2: var(--mist-2);
+  --color-rule: var(--rule);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-pencil: var(--pencil);
+  --color-deep: var(--deep);
+  --color-deep-2: var(--deep-2);
+  --color-electric: var(--electric);
+  --color-sky: var(--sky);
+  --color-sky-2: var(--sky-2);
+  --font-sans: var(--font-anek), ui-sans-serif, system-ui, sans-serif;
+  --font-hand: var(--font-kalam), "Segoe Print", cursive;
+}

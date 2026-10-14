@@ -1,0 +1,513 @@
+/* ------------------------------------------------------------------ blog
+   The list reuses the work cards' frame; articles read like a case study
+   with a long body. Two voices as everywhere: handwriting for headings,
+   regular-weight Anek for everything else. */
+
+.blog-list {
+  position: relative;
+  padding-top: 0;
+}
+.blog-list--category {
+  padding-top: clamp(3rem, 2rem + 4vw, 6rem);
+}
+.blog-list__title {
+  max-width: 20ch;
+}
+.blog-list__lead {
+  margin-top: 1.25rem;
+}
+.blog-empty {
+  margin-top: 1rem;
+}
+
+/* Category links: quiet pills; the current one is filled. */
+.blog-cats ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.blog-list--category .blog-cats {
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+.blog-cats a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.5rem;
+  padding: 0.5rem 1rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+  transition:
+    border-color 0.25s var(--ease-out),
+    color 0.25s var(--ease-out),
+    background-color 0.25s var(--ease-out);
+}
+.blog-cats a:hover {
+  border-color: var(--electric);
+  color: var(--electric);
+}
+.blog-cats a[aria-current="page"] {
+  background: var(--electric);
+  border-color: var(--electric);
+  color: #fff;
+}
+
+.post-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  gap: 1.25rem;
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.post-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  height: 100%;
+  padding: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+  border-radius: 26px;
+  border: 1px solid var(--rule);
+  background: #fff;
+  transition:
+    border-color 0.3s var(--ease-out),
+    box-shadow 0.3s var(--ease-out);
+}
+.post-card:hover {
+  border-color: var(--electric);
+  box-shadow: 0 28px 50px -36px rgb(35 80 255 / 0.5);
+}
+.post-card:has(.post-card__link:focus-visible) {
+  outline: 2px solid var(--electric);
+  outline-offset: 3px;
+}
+.post-card__link:focus-visible {
+  outline: none;
+}
+.post-card__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+.post-card__cover {
+  margin: calc(clamp(1.25rem, 1rem + 1vw, 1.75rem) * -1) calc(clamp(1.25rem, 1rem + 1vw, 1.75rem) * -1) 0.5rem;
+  border-radius: 25px 25px 0 0;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  background: var(--mist);
+}
+.post-card__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.post-card__meta,
+.post__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.9rem;
+  font-size: 0.9375rem;
+  color: var(--ink-3);
+}
+.post-card__meta > * + *::before,
+.post__meta > * + *::before,
+.post__byline > * + *::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  margin-right: 0.9rem;
+  border-radius: 999px;
+  background: var(--pencil);
+  vertical-align: middle;
+}
+.post-card__title {
+  color: var(--ink);
+}
+.post-card__excerpt {
+  color: var(--ink-2);
+  line-height: 1.55;
+}
+
+/* ------------------------------------------------------------------ article */
+
+.post {
+  position: relative;
+  padding-block: clamp(3rem, 2rem + 4vw, 6rem) clamp(4rem, 3rem + 5vw, 8rem);
+}
+.post__head {
+  max-width: 54rem;
+}
+.post__title {
+  margin-top: 1rem;
+  max-width: 22ch;
+}
+.post__lead {
+  margin-top: 1.5rem;
+  max-width: 42rem;
+}
+.post__byline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.9rem;
+  margin-top: 1.25rem;
+  color: var(--ink-3);
+  font-size: 0.9375rem;
+}
+.post__cover {
+  margin: clamp(2rem, 4vw, 3.5rem) 0 0;
+  border-radius: 26px;
+  overflow: hidden;
+  background: var(--mist);
+}
+.post__cover img {
+  width: 100%;
+  height: auto;
+}
+
+.post__layout {
+  display: grid;
+  /* minmax(0, …) lets wide tables scroll inside their frame instead of widening the column */
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2.5rem;
+  margin-top: clamp(2.5rem, 5vw, 4.5rem);
+  max-width: 46rem;
+}
+@media (min-width: 1000px) {
+  .post__layout--toc {
+    grid-template-columns: 15rem minmax(0, 46rem);
+    gap: clamp(3rem, 5vw, 5rem);
+    max-width: none;
+  }
+}
+
+.post__toc {
+  align-self: start;
+  padding: 1.25rem 1.25rem 1.1rem;
+  border-radius: 18px;
+  border: 1px solid var(--rule);
+  font-size: 0.9375rem;
+}
+@media (min-width: 1000px) {
+  .post__toc {
+    position: sticky;
+    top: calc(var(--header-h) + 1.5rem);
+    max-height: calc(100vh - var(--header-h) - 3rem);
+    overflow: auto;
+  }
+}
+.post__toc > p {
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.post__toc ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+.post__toc li[data-level="3"] {
+  padding-left: 0.9rem;
+}
+.post__toc a {
+  color: var(--ink-2);
+  line-height: 1.4;
+}
+.post__toc a:hover {
+  color: var(--electric);
+}
+
+.post__tags {
+  list-style: none;
+  margin: 3rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.post__tags li {
+  padding: 0.35rem 0.8rem 0.3rem;
+  border-radius: 999px;
+  background: var(--mist);
+  color: var(--ink-2);
+  font-size: 0.875rem;
+}
+
+.post__related {
+  margin-top: clamp(4rem, 8vw, 7rem);
+  padding-top: clamp(2.5rem, 5vw, 4rem);
+  border-top: 1px solid var(--rule);
+}
+.post__related-title {
+  font-family: var(--font-hand);
+  color: var(--deep);
+  letter-spacing: 0;
+}
+
+/* ------------------------------------------------------------------ article body
+   Markup comes from the CMS (src/components/blog/RichText.tsx). */
+
+.prose {
+  font-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  line-height: 1.75;
+  color: var(--ink-body);
+  overflow-wrap: break-word;
+}
+.prose > * + * {
+  margin-top: 1.25em;
+}
+.prose h2,
+.prose h3 {
+  font-family: var(--font-hand);
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--deep);
+  scroll-margin-top: calc(var(--header-h) + 1.5rem);
+  text-wrap: balance;
+}
+.prose h2 {
+  margin-top: 2.2em;
+  font-size: clamp(1.9rem, 1.4rem + 1.6vw, 2.6rem);
+  line-height: 1.1;
+}
+.prose h3 {
+  margin-top: 1.8em;
+  font-size: clamp(1.5rem, 1.25rem + 0.9vw, 1.9rem);
+  line-height: 1.15;
+}
+.prose h4 {
+  margin-top: 1.6em;
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: var(--ink);
+  scroll-margin-top: calc(var(--header-h) + 1.5rem);
+}
+.prose h2 + *,
+.prose h3 + *,
+.prose h4 + * {
+  margin-top: 0.6em;
+}
+.prose a:not(.btn) {
+  color: var(--electric);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+.prose a:not(.btn):hover {
+  color: var(--electric-ink);
+}
+/* The editor's bold stays visible, at the face's regular weight, through colour. */
+.prose strong {
+  font-weight: 400;
+  color: var(--ink);
+  background: linear-gradient(transparent 62%, var(--sky-2) 62%);
+}
+.prose ul,
+.prose ol {
+  padding-left: 1.4em;
+}
+.prose ul {
+  list-style: disc;
+}
+.prose ol {
+  list-style: decimal;
+}
+.prose li + li {
+  margin-top: 0.4em;
+}
+.prose ul:has(> .prose__check) {
+  padding-left: 0;
+}
+.prose li::marker {
+  color: var(--electric);
+}
+/* Checklist items (RichText's listitem converter). */
+.prose li.prose__check {
+  list-style: none;
+  position: relative;
+  padding-left: 1.8em;
+}
+.prose li.prose__check::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  width: 1em;
+  height: 1em;
+  border-radius: 4px;
+  border: 1.5px solid var(--electric);
+}
+.prose li.prose__check[data-checked="true"]::before {
+  background: var(--electric);
+}
+.prose blockquote {
+  margin-inline: 0;
+  padding: 0.25em 0 0.25em 1.25em;
+  border-left: 3px solid var(--electric);
+  font-family: var(--font-hand);
+  font-size: 1.25em;
+  line-height: 1.45;
+  color: var(--deep);
+}
+.prose hr {
+  border: 0;
+  height: 2px;
+  margin-block: 2.5em;
+  background: repeating-linear-gradient(90deg, var(--pencil) 0 6px, transparent 6px 11px);
+}
+.prose code {
+  padding: 0.1em 0.35em;
+  border-radius: 6px;
+  background: var(--mist);
+  font-size: 0.9em;
+}
+.prose sub,
+.prose sup {
+  font-size: 0.7em;
+}
+
+.prose__figure {
+  margin: 2em 0;
+}
+.prose__figure img {
+  width: 100%;
+  height: auto;
+  border-radius: 18px;
+}
+/* Alignment set in the editor; only visible on images narrower than the column. */
+.prose__figure[data-align="center"] img {
+  margin-inline: auto;
+}
+.prose__figure[data-align="right"] img,
+.prose__figure[data-align="end"] img {
+  margin-left: auto;
+}
+.prose__figure figcaption {
+  margin-top: 0.6rem;
+  font-size: 0.9375rem;
+  color: var(--ink-3);
+}
+
+.prose__table {
+  margin-block: 2em;
+  max-width: 100%;
+  overflow-x: auto;
+  border-radius: 14px;
+  border: 1px solid var(--rule);
+}
+.prose__table:focus-visible {
+  outline: 2px solid var(--electric);
+  outline-offset: 2px;
+}
+.prose__table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95em;
+  line-height: 1.5;
+}
+.prose__table th,
+.prose__table td {
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  vertical-align: top;
+  min-width: 8rem;
+}
+.prose__table th {
+  font-weight: 400;
+  color: var(--ink);
+  background: var(--mist);
+}
+.prose__table tr:last-child > * {
+  border-bottom: 0;
+}
+.prose__table th + th,
+.prose__table td + td,
+.prose__table th + td,
+.prose__table td + th {
+  border-left: 1px solid var(--rule);
+}
+.prose__table p {
+  margin: 0;
+}
+
+.prose__callout {
+  margin-block: 2em;
+  padding: 1.1rem 1.25rem;
+  border-radius: 16px;
+  border: 1px solid var(--sky);
+  background: var(--sky-2);
+}
+.prose__callout[data-tone="tip"] {
+  border-color: var(--electric);
+  background: #fff;
+}
+.prose__callout[data-tone="warning"] {
+  border: 1px dashed var(--ink-3);
+  background: var(--mist);
+}
+.prose__callout-title {
+  color: var(--deep);
+  margin-bottom: 0.35rem;
+}
+
+.prose__faq {
+  margin-block: 2em;
+  border-top: 1px solid var(--rule);
+}
+.prose__faq details {
+  border-bottom: 1px solid var(--rule);
+}
+.prose__faq summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 0;
+  color: var(--ink);
+  cursor: var(--cursor-hand);
+  list-style: none;
+}
+.prose__faq summary::-webkit-details-marker {
+  display: none;
+}
+.prose__faq summary::after {
+  content: "+";
+  color: var(--electric);
+  font-size: 1.3em;
+  line-height: 1;
+  transition: transform 0.25s var(--ease-out);
+}
+.prose__faq details[open] summary::after {
+  transform: rotate(45deg);
+}
+.prose__faq details p {
+  padding-bottom: 1rem;
+  color: var(--ink-2);
+}
+
+.prose__cta {
+  margin-block: 2.5em;
+  padding: clamp(1.5rem, 1rem + 2vw, 2.25rem);
+  border-radius: 22px;
+  background: var(--deep);
+  color: #fff;
+}
+.prose__cta-heading {
+  font-family: var(--font-hand);
+  font-size: clamp(1.6rem, 1.3rem + 1vw, 2.1rem);
+  line-height: 1.15;
+}
+.prose__cta p + p {
+  margin-top: 0.6rem;
+  color: var(--sky-2);
+}
+.prose__cta .btn {
+  margin-top: 1.25rem;
+}
