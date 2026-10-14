@@ -1,9 +1,10 @@
 "use client";
 
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useLayoutEffect } from "react";
 import { usePathname } from "next/navigation";
 import type Lenis from "lenis";
 import { loadGsap, queueRefresh, useMotionMode } from "@/lib/motion";
+import { MOTION_KEY, WIDE_QUERY, prepareDocument } from "@/lib/motion-script";
 
 declare global {
   interface Window {
@@ -25,6 +26,14 @@ export function MotionProvider() {
 }
 
 function Motion() {
+  // The <head> script didn't run (a page built in the browser, like the 404 error shell).
+  useLayoutEffect(() => {
+    if (document.documentElement.classList.contains("no-js")) {
+      prepareDocument(MOTION_KEY, WIDE_QUERY);
+      window.dispatchEvent(new Event("acc-motion"));
+    }
+  }, []);
+
   const mode = useMotionMode();
   const pathname = usePathname();
 
@@ -36,7 +45,7 @@ function Motion() {
     let tick: ((time: number) => void) | undefined;
     Promise.all([import("lenis"), loadGsap()]).then(([{ default: LenisCtor }, { gsap, ScrollTrigger }]) => {
       if (cancelled) return;
-      lenis = new LenisCtor({ lerp: 0.1, anchors: { offset: -88 }, autoRaf: false });
+      lenis = new LenisCtor({ lerp: 0.1, anchors: true, autoRaf: false });
       lenis.on("scroll", ScrollTrigger.update);
       tick = (time: number) => lenis?.raf(time * 1000);
       gsap.ticker.add(tick);
@@ -57,7 +66,8 @@ function Motion() {
     queueRefresh();
   }, [pathname]);
 
-  // Buttons lean towards the pointer.
+  // Buttons lean towards the pointer. The lean is CSS `translate` (via --mx/--my,
+  // see base.css), so it stacks with the buttons' own transform for hover and press.
   useEffect(() => {
     if (mode !== "full" || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
     let active: HTMLElement | null = null;
@@ -79,8 +89,8 @@ function Motion() {
         if (!el || el.getAttribute("aria-disabled") === "true") return;
         active = el;
         to = {
-          x: gsapRef.quickTo(el, "x", { duration: 0.5, ease: "power3.out" }),
-          y: gsapRef.quickTo(el, "y", { duration: 0.5, ease: "power3.out" }),
+          x: gsapRef.quickTo(el, "--mx", { duration: 0.5, ease: "power3.out" }),
+          y: gsapRef.quickTo(el, "--my", { duration: 0.5, ease: "power3.out" }),
         };
       }
       if (!active || !to) return;

@@ -1,14 +1,15 @@
 import Link from "next/link";
 import { proof } from "@/content/home";
-import { caseStudies } from "@/content/work";
+import { getCaseStudies } from "@/lib/work";
 import { WorkCard } from "@/components/work/WorkCard";
 import { Spine } from "@/components/motion/Spine";
 import { SplitHeading } from "@/components/motion/SplitHeading";
 import { Note } from "@/components/Note";
 
 /** Home section 5: two or three case studies (brief). */
-export function Work() {
-  const shown = caseStudies.slice(0, 3);
+export async function Work() {
+  const shown = (await getCaseStudies()).slice(0, 3);
+  if (!shown.length) return null;
   return (
     <section className="section work-home" aria-labelledby="work-title">
       <Spine />
@@ -17,8 +18,8 @@ export function Work() {
           <SplitHeading id="work-title" className="t-h2" sketch>
             {proof.heading}
           </SplitHeading>
-          <Link href="/work" className="link">
-            All work
+          <Link href="/case-studies" className="link">
+            All case studies
           </Link>
         </div>
         <Note arrow="down-right" className="work-home__note">

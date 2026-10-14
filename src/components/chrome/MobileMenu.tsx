@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { site, whatsappHref } from "@/content/site";
 import { isActive } from "./NavLinks";
 import { Logo } from "./Logo";
@@ -47,6 +47,11 @@ export function MobileMenu() {
     window.__lenis?.start();
     setOpen(false);
   };
+
+  // Close on any route change, including browser Back/Forward, which never touches a menu link.
+  useEffect(() => {
+    if (dialog.current?.open) dialog.current.close();
+  }, [pathname]);
 
   // A transient menu should not survive the page being hidden (Activity).
   useLayoutEffect(() => {

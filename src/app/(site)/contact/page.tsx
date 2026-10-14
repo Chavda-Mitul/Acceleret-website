@@ -6,7 +6,7 @@ import { ContactForm } from "@/components/contact/ContactForm";
 import { JsonLd } from "@/components/JsonLd";
 import { localBusinessJsonLd } from "@/lib/schema";
 import {
-  CalendarIcon,
+  FacebookIcon,
   InstagramIcon,
   LinkedInIcon,
   MailIcon,
@@ -15,6 +15,7 @@ import {
   WhatsAppIcon,
 } from "@/components/icons";
 import { SketchFrame } from "@/components/motion/SketchFrame";
+import { SplitHeading } from "@/components/motion/SplitHeading";
 
 export const metadata: Metadata = {
   title: seo.contact.title,
@@ -35,16 +36,16 @@ export default function ContactPage() {
 
       <section className="contact" aria-label="Book a walkthrough">
         <div className="wrap contact__grid">
-          <SketchFrame radius={28} seed={17}>
+          <SketchFrame radius={28} seed={17} priority>
             <div className="contact__form">
               <ContactForm />
             </div>
           </SketchFrame>
 
           <aside id="reach" className="contact__reach" aria-labelledby="reach-title">
-            <h2 id="reach-title" className="t-h4">
+            <SplitHeading id="reach-title" className="t-h4" sketch>
               Reach us directly
-            </h2>
+            </SplitHeading>
             <ul className="reach-list">
               <li>
                 <PinIcon />
@@ -92,34 +93,14 @@ export default function ContactPage() {
                   <InstagramIcon />
                 </a>
               ) : null}
-              {!contact.linkedin && !contact.instagram && showPending ? (
-                <span className="pending-tag">LinkedIn and Instagram links pending</span>
-              ) : null}
-            </div>
-
-            <div className="slot">
-              <CalendarIcon size={22} />
-              <h2 className="t-h4">Prefer to pick a slot?</h2>
-              {contact.bookingUrl ? (
-                <a href={contact.bookingUrl} target="_blank" rel="noopener noreferrer" className="btn btn-ghost btn-sm">
-                  Choose a time
-                  <span className="sr-only"> (opens in a new tab)</span>
+              {contact.facebook ? (
+                <a href={contact.facebook} target="_blank" rel="noopener noreferrer" aria-label="Acceleret on Facebook">
+                  <FacebookIcon />
                 </a>
-              ) : (
-                <>
-                  <p>
-                    Email{" "}
-                    <a
-                      className="prose-link"
-                      href={`mailto:${contact.email}?subject=${encodeURIComponent("Walkthrough: a time that suits us")}`}
-                    >
-                      {contact.email}
-                    </a>{" "}
-                    with a couple of times that suit you.
-                  </p>
-                  {showPending ? <span className="pending-tag">Booking link pending</span> : null}
-                </>
-              )}
+              ) : null}
+              {!contact.linkedin && !contact.instagram && !contact.facebook && showPending ? (
+                <span className="pending-tag">Social links pending</span>
+              ) : null}
             </div>
           </aside>
         </div>

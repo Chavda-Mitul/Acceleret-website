@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     posts: Post;
     categories: Category;
+    'case-studies': CaseStudy;
     media: Media;
     users: User;
     'payload-kv': PayloadKv;
@@ -80,6 +81,7 @@ export interface Config {
   collectionsSelect: {
     posts: PostsSelect<false> | PostsSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    'case-studies': CaseStudiesSelect<false> | CaseStudiesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -283,6 +285,110 @@ export interface Category {
   createdAt: string;
 }
 /**
+ * Projects shown on /case-studies. Save as a draft while writing; Publish puts it live.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "case-studies".
+ */
+export interface CaseStudy {
+  id: number;
+  title: string;
+  /**
+   * Client name, or a sector and city ("A Surat textile exporter").
+   */
+  client: string;
+  /**
+   * One line on what changed. Shown under the title, on Home, and to search engines if the SEO tab is empty.
+   */
+  result: string;
+  /**
+   * Wide images work best (about 1600 × 900).
+   */
+  coverImage?: (number | null) | Media;
+  /**
+   * The card on /case-studies: one sentence each.
+   */
+  summary: {
+    problem: string;
+    built: string;
+    changed: string;
+  };
+  /**
+   * About 80 words: the business and what wasn't working.
+   */
+  situation: string;
+  /**
+   * About 100 words.
+   */
+  whatWeBuilt: string;
+  /**
+   * Three to five, one line each.
+   */
+  features?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Three is best. Add a number when there is one ("30%", "5k+").
+   */
+  outcomes?:
+    | {
+        /**
+         * Optional.
+         */
+        value?: string | null;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional. Only a real quote from the client.
+   */
+  quote?: {
+    text?: string | null;
+    /**
+     * Leave empty to show the role only.
+     */
+    name?: string | null;
+    role?: string | null;
+  };
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+    /**
+     * Only if this article was first published elsewhere. Leave empty otherwise.
+     */
+    canonical?: string | null;
+    noindex?: boolean | null;
+  };
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  /**
+   * Lower numbers come first. The first three are shown on Home.
+   */
+  order?: number | null;
+  /**
+   * Industry and kind of software ("Real estate", "CRM"). Press Enter after each.
+   */
+  tags?: string[] | null;
+  /**
+   * Press Enter after each.
+   */
+  techStack?: string[] | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -313,6 +419,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'categories';
         value: number | Category;
+      } | null)
+    | ({
+        relationTo: 'case-studies';
+        value: number | CaseStudy;
       } | null)
     | ({
         relationTo: 'media';
@@ -403,6 +513,62 @@ export interface CategoriesSelect<T extends boolean = true> {
   slug?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "case-studies_select".
+ */
+export interface CaseStudiesSelect<T extends boolean = true> {
+  title?: T;
+  client?: T;
+  result?: T;
+  coverImage?: T;
+  summary?:
+    | T
+    | {
+        problem?: T;
+        built?: T;
+        changed?: T;
+      };
+  situation?: T;
+  whatWeBuilt?: T;
+  features?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  outcomes?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
+  quote?:
+    | T
+    | {
+        text?: T;
+        name?: T;
+        role?: T;
+      };
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+        canonical?: T;
+        noindex?: T;
+      };
+  generateSlug?: T;
+  slug?: T;
+  order?: T;
+  tags?: T;
+  techStack?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

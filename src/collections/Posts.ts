@@ -1,5 +1,5 @@
 import { slugField, type CollectionBeforeChangeHook, type CollectionConfig } from "payload";
-import { revalidateAfterChange, revalidateAfterDelete } from "./revalidate";
+import { BLOG_TAG, revalidates } from "./revalidate";
 
 /** First publish stamps the date shown on the article, unless the writer set one. */
 const stampPublishedAt: CollectionBeforeChangeHook = ({ data }) => {
@@ -89,7 +89,6 @@ export const Posts: CollectionConfig = {
   ],
   hooks: {
     beforeChange: [stampPublishedAt],
-    afterChange: [revalidateAfterChange],
-    afterDelete: [revalidateAfterDelete],
+    ...revalidates(BLOG_TAG),
   },
 };

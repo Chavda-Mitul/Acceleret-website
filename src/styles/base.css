@@ -32,6 +32,8 @@
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  /* a pen moving across the page: handwritten headings and notes */
+  --ease-write: cubic-bezier(0.45, 0.05, 0.55, 0.95);
 
   --gutter: clamp(1.25rem, 0.6rem + 2.6vw, 3rem);
   --max: 1320px;
@@ -236,6 +238,12 @@ svg {
 .btn:active {
   transform: translateY(1px) scale(0.99);
 }
+/* the lean towards the pointer (MotionProvider), kept apart from `transform` */
+.btn,
+.wa-button,
+[data-magnetic] {
+  translate: calc(var(--mx, 0) * 1px) calc(var(--my, 0) * 1px);
+}
 
 /* The node: a small dot that travels to the end of the button on hover,
    the same mark the site's diagrams use for a step that is connected. */
@@ -301,11 +309,30 @@ svg {
   background-size: 100% 1.5px;
 }
 
+/* Small text links and controls: a larger invisible hit area for fingers,
+   with no change to how they look or where they sit. */
+:is(.link, .site-footer__col a, .post__toc a, .mobile-menu__contact a, .site-header__logo, .motion-switch button, .blog-cats a) {
+  position: relative;
+}
+:is(.link, .site-footer__col a, .post__toc a, .mobile-menu__contact a, .site-header__logo, .motion-switch button, .blog-cats a)::after {
+  content: "";
+  position: absolute;
+  inset: -10px -6px;
+}
+/* side by side: grow up and down only, so neither covers the other */
+.motion-switch button::after {
+  inset: -6px 0;
+}
+
 .prose-link {
   color: var(--electric);
   text-decoration: underline;
   text-decoration-thickness: 1.5px;
   text-underline-offset: 3px;
+  transition: color 0.25s var(--ease-out);
+}
+.prose-link:hover {
+  color: var(--electric-ink);
 }
 
 /* Pending content marker (site.showPending). */

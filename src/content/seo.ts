@@ -21,7 +21,7 @@ export const seo = {
     description: "Software products built by Acceleret, including a CRM for travel agencies.",
   },
   work: {
-    title: "Work | Acceleret",
+    title: "Case studies | Acceleret",
     description: "Case studies: what Acceleret built and what changed.",
   },
   team: {

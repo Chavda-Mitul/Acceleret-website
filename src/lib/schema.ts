@@ -2,7 +2,7 @@ import { seo } from "@/content/seo";
 import { site } from "@/content/site";
 import { people } from "@/content/team";
 
-const sameAs = () => [site.contact.linkedin, site.contact.instagram].filter(Boolean);
+const sameAs = () => [site.contact.linkedin, site.contact.instagram, site.contact.facebook].filter(Boolean);
 
 /** schema.org Organization, on Home (brief §6). */
 export function organizationJsonLd() {

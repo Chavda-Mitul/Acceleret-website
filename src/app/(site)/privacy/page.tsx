@@ -3,6 +3,7 @@ import { baseOpenGraph, seo } from "@/content/seo";
 import { site } from "@/content/site";
 import { PageHero } from "@/components/PageHero";
 import { Spine } from "@/components/motion/Spine";
+import { SplitHeading } from "@/components/motion/SplitHeading";
 
 export const metadata: Metadata = {
   title: seo.privacy.title,
@@ -37,19 +38,19 @@ export default function PrivacyPage() {
           ) : null}
 
           <div className="privacy__body">
-            <h2>What we collect</h2>
+            <SplitHeading sketch>What we collect</SplitHeading>
             <p>
               When you fill in the walkthrough form, we receive your name, company, phone number, email address and what
               you tell us about how your team works today. If you email or WhatsApp us, we receive whatever you send.
             </p>
 
-            <h2>Why we collect it</h2>
+            <SplitHeading sketch>Why we collect it</SplitHeading>
             <p>
               Only to reply to you and arrange the walkthrough you asked for. We don&apos;t add you to a mailing list,
               and we don&apos;t use your details for anything else.
             </p>
 
-            <h2>Who sees it</h2>
+            <SplitHeading sketch>Who sees it</SplitHeading>
             <p>
               The Acceleret team. Your request is delivered to our inbox
               {/* Confirm: storage — e.g. "and kept in a private spreadsheet only the founders can open". */} by an
@@ -57,14 +58,14 @@ export default function PrivacyPage() {
               it with anyone else unless the law requires us to.
             </p>
 
-            <h2>How long we keep it</h2>
+            <SplitHeading sketch>How long we keep it</SplitHeading>
             <p>
               For as long as we&apos;re talking with you about your project, and then for up to two years so we have the
               history if you come back to us.{" "}
               {site.showPending ? <span className="privacy__confirm">Confirm</span> : null}
             </p>
 
-            <h2>Analytics</h2>
+            <SplitHeading sketch>Analytics</SplitHeading>
             <p>
               We may use Google Analytics to count visits and see which pages are useful. It records things like the
               pages viewed and the type of device, not your name or contact details.{" "}
@@ -73,7 +74,7 @@ export default function PrivacyPage() {
               ) : null}
             </p>
 
-            <h2>Your choices</h2>
+            <SplitHeading sketch>Your choices</SplitHeading>
             <p>
               You can ask to see the information we hold about you, correct it, or have it deleted. Email{" "}
               <a className="prose-link" href={`mailto:${email}?subject=${encodeURIComponent("Privacy request")}`}>
@@ -82,7 +83,7 @@ export default function PrivacyPage() {
               and we&apos;ll do it and confirm by reply.
             </p>
 
-            <h2>Contact</h2>
+            <SplitHeading sketch>Contact</SplitHeading>
             <p>
               Acceleret, Surat, Gujarat, India ·{" "}
               <a className="prose-link" href={`mailto:${email}`}>

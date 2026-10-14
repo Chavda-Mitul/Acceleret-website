@@ -22,7 +22,8 @@ export const productsIntro = "Alongside custom work, we build products of our ow
 export const products: Product[] = [
   {
     name: "Travel CRM",
-    logo: "",
+    /** Placeholder logo until the real one is supplied. */
+    logo: "/products/travel-crm.svg",
     url: "",
     line: "A CRM for travel agencies, built inside a working agency with the people who run it. Enquiries, quotes, bookings, payments and follow-ups in one place.",
     flow: ["Enquiries", "Quotes", "Bookings", "Payments", "Follow-ups"],

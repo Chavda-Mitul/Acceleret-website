@@ -46,7 +46,8 @@
     transform: translateY(12px);
   }
 }
-.hero[data-played="true"] :is(.hero__actions) {
+.hero[data-played="true"] :is(.hero__actions, .hero__cue),
+[data-motion="full"] .hero[data-played="true"] .hs-map[data-phase="built"] :is(.hb-grow, .hb-pop) {
   animation: none;
 }
 

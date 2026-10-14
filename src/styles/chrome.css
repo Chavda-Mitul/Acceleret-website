@@ -51,10 +51,14 @@ a:hover > .logo .logo-mark {
   border-bottom: 1px solid transparent;
   transition:
     border-color 0.3s var(--ease-out),
-    background-color 0.3s var(--ease-out);
+    background-color 0.3s var(--ease-out),
+    margin-bottom 0.35s var(--ease-out);
 }
+/* The bar shrinks once scrolled; the margin keeps the space it gave up, so the
+   page doesn't shift up under the reader (or under an anchor link's target). */
 .site-header[data-scrolled="true"] {
   border-color: var(--rule);
+  margin-bottom: calc(var(--header-h) - 62px);
 }
 .site-header__inner {
   display: flex;
@@ -96,6 +100,7 @@ a:hover > .logo .logo-mark {
   border-radius: 999px;
   font-size: 0.975rem;
   font-weight: 400;
+  white-space: nowrap;
   color: var(--ink-2);
   transition:
     color 0.2s var(--ease-out),
@@ -126,6 +131,15 @@ a:hover > .logo .logo-mark {
 }
 .site-header__cta {
   flex: none;
+}
+/* Just above the mobile breakpoint, tighten the row so every label stays on one line. */
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .site-header__inner {
+    gap: 1.25rem;
+  }
+  .nav-link {
+    padding-inline: 0.6rem;
+  }
 }
 
 .menu-button {
@@ -335,12 +349,16 @@ html[data-menu-open="true"] {
 .site-footer__col address {
   font-style: normal;
   color: rgb(255 255 255 / 0.85);
-  transition: color 0.2s var(--ease-out);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  transition:
+    color 0.25s var(--ease-out),
+    text-decoration-color 0.25s var(--ease-out);
 }
 .site-footer__col a:hover {
   color: #fff;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  text-decoration-color: currentColor;
 }
 .site-footer__social {
   display: flex;
@@ -354,8 +372,12 @@ html[data-menu-open="true"] {
   height: 2.5rem;
   border-radius: 999px;
   border: 1px solid rgb(255 255 255 / 0.25);
+  transition:
+    background-color 0.25s var(--ease-out),
+    border-color 0.25s var(--ease-out);
 }
 .site-footer__social a:hover {
+  border-color: rgb(255 255 255 / 0.5);
   background: rgb(255 255 255 / 0.1);
 }
 .site-footer__base {
@@ -399,9 +421,10 @@ html[data-menu-open="true"] {
   border-radius: 999px;
   background: var(--deep);
   color: #fff;
+  /* the white ring keeps it visible over the deep-blue CTA band and footer */
   box-shadow:
     0 10px 30px -12px rgb(10 33 99 / 0.55),
-    0 0 0 1px rgb(255 255 255 / 0.08) inset;
+    0 0 0 2px rgb(255 255 255 / 0.9);
   transition:
     background-color 0.25s var(--ease-out),
     transform 0.25s var(--ease-out);
@@ -442,6 +465,8 @@ html[data-menu-open="true"] {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  /* clear of the floating WhatsApp button, which sits over this corner */
+  padding-right: max(var(--gutter), 5.5rem);
 }
 .motion-switch {
   display: inline-flex;

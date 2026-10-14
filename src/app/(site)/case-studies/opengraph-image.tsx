@@ -5,5 +5,5 @@ export const size = ogSize;
 export const contentType = ogContentType;
 
 export default function Image() {
-  return ogImage("What we’ve built and what changed.", "Work · acceleret.com");
+  return ogImage("What we’ve built and what changed.", "Case studies · acceleret.com");
 }

@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const routes = ["/", "/services", "/how-we-work", "/products", "/work", "/work/sample-textile-exporter", "/blog", "/team", "/contact", "/privacy"];
+const routes = ["/", "/services", "/how-we-work", "/products", "/case-studies", "/blog", "/team", "/contact", "/privacy"];
 
 function collectErrors(page: Page) {
   const errors: string[] = [];
@@ -57,7 +57,7 @@ test("service tiles link to their anchors on /services", async ({ page }) => {
 test("main navigation reaches every page", async ({ page, isMobile }) => {
   test.skip(isMobile, "desktop navigation");
   await page.goto("/");
-  for (const name of ["Services", "How we work", "Products", "Work", "Blog", "Contact"]) {
+  for (const name of ["Services", "How we work", "Products", "Case studies", "Blog", "Contact"]) {
     await page.getByRole("navigation", { name: "Main" }).getByRole("link", { name, exact: true }).click();
     await expect(page.locator("h1:visible")).toBeVisible();
     await expect(page.getByRole("navigation", { name: "Main" }).getByRole("link", { name, exact: true })).toHaveAttribute(

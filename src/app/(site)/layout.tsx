@@ -10,6 +10,7 @@ import { MotionProvider } from "@/components/motion/MotionProvider";
 import { MotionPrompt } from "@/components/motion/MotionToggle";
 import { PencilLayer } from "@/components/motion/PencilLayer";
 import { motionScript } from "@/lib/motion-script";
+import { HeadScript } from "@/components/HeadScript";
 import "./globals.css";
 
 /* Two typefaces (brief §5), both from Indian foundries:
@@ -49,9 +50,6 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-/* Before first paint: drop the no-js class (drawings only start hidden when
-   JavaScript is there to reveal them) and set the motion mode. */
-const jsFlag = `document.documentElement.classList.remove("no-js");${motionScript}`;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
@@ -62,7 +60,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: jsFlag }} />
+        {/* Before first paint: no-js, motion mode, wide screens (lib/motion-script.ts). */}
+        <HeadScript html={motionScript} />
       </head>
       <body>
         <a className="skip-link" href="#main">

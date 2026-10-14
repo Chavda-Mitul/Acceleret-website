@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { baseOpenGraph, seo } from "@/content/seo";
-import { caseStudies, workIntro } from "@/content/work";
+import { workIntro } from "@/content/work";
+import { getCaseStudies } from "@/lib/work";
 import { PageHero } from "@/components/PageHero";
 import { CtaBand } from "@/components/CtaBand";
 import { WorkCard } from "@/components/work/WorkCard";
@@ -9,11 +10,12 @@ import { Spine } from "@/components/motion/Spine";
 export const metadata: Metadata = {
   title: seo.work.title,
   description: seo.work.description,
-  alternates: { canonical: "/work" },
-  openGraph: { ...baseOpenGraph, title: seo.work.title, description: seo.work.description, url: "/work" },
+  alternates: { canonical: "/case-studies" },
+  openGraph: { ...baseOpenGraph, title: seo.work.title, description: seo.work.description, url: "/case-studies" },
 };
 
-export default function WorkPage() {
+export default async function WorkPage() {
+  const caseStudies = await getCaseStudies();
   return (
     <>
       <PageHero title={workIntro} note="problem, what we built, what changed" />

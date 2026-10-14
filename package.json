@@ -14,6 +14,7 @@
     "migrate": "payload migrate",
     "migrate:create": "payload migrate:create",
     "seed:blog": "payload run src/scripts/seed-blog.ts",
+    "seed:work": "payload run src/scripts/seed-work.ts",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
     "test:e2e": "playwright test",
@@ -22,6 +23,7 @@
   "dependencies": {
     "@next/third-parties": "^16.4.0",
     "@payloadcms/db-postgres": "3.90.2",
+    "@payloadcms/email-nodemailer": "3.90.2",
     "@payloadcms/next": "3.90.2",
     "@payloadcms/plugin-seo": "3.90.2",
     "@payloadcms/richtext-lexical": "3.90.2",

@@ -66,7 +66,16 @@ export async function generateMetadata(props: PageProps<"/blog/[slug]">): Promis
  * Same shape as a case study: the back link and closing CTA are the static
  * shell; the article depends on the URL, so it sits inside <Suspense>.
  */
-export default function PostPage(props: PageProps<"/blog/[slug]">) {
+/*
+ * The slug is checked before anything streams, so an unknown one gets a real 404
+ * (once the shell is sent the status is fixed at 200). That reads params outside
+ * <Suspense>, so the route blocks on its (cached) data instead of showing an
+ * instant shell on client navigation.
+ */
+export const instant = false;
+
+export default async function PostPage(props: PageProps<"/blog/[slug]">) {
+  if (!(await getPost((await props.params).slug))) notFound();
   return (
     <>
       <article className="post" aria-labelledby="post-title">
@@ -203,9 +212,9 @@ async function PostBody({ params }: { params: PageProps<"/blog/[slug]">["params"
 
       {related.length ? (
         <section className="post__related" aria-labelledby="related-title">
-          <h2 id="related-title" className="t-h3 post__related-title">
+          <SplitHeading id="related-title" className="t-h3 post__related-title" sketch>
             Keep reading
-          </h2>
+          </SplitHeading>
           <div className="post-grid">
             {related.map((p, i) => (
               <PostCard key={p.id} post={p} index={i} as="h3" />

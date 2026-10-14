@@ -75,6 +75,9 @@ const nextConfig: NextConfig = {
         destination: "https://acceleret.com/:path*",
         permanent: true,
       },
+      // The case studies section was called "Work" before 14 Oct 2026.
+      { source: "/work", destination: "/case-studies", permanent: true },
+      { source: "/work/:slug*", destination: "/case-studies/:slug*", permanent: true },
     ];
   },
 };

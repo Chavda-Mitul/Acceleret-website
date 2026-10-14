@@ -1,5 +1,5 @@
 import { slugField, type CollectionConfig } from "payload";
-import { revalidateAfterChange, revalidateAfterDelete } from "./revalidate";
+import { BLOG_TAG, revalidates } from "./revalidate";
 
 /** Topics that group articles, each with its own page at /blog/category/<slug>. */
 export const Categories: CollectionConfig = {
@@ -15,8 +15,5 @@ export const Categories: CollectionConfig = {
     },
     slugField({ position: "sidebar" }),
   ],
-  hooks: {
-    afterChange: [revalidateAfterChange],
-    afterDelete: [revalidateAfterDelete],
-  },
+  hooks: revalidates(BLOG_TAG),
 };
