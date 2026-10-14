@@ -3,6 +3,7 @@
 import { Fragment, useRef, type CSSProperties } from "react";
 import { problem } from "@/content/home";
 import { useScene } from "@/lib/motion";
+import { WIDE_QUERY } from "@/lib/motion-script";
 import { Spine } from "@/components/motion/Spine";
 import { SplitHeading } from "@/components/motion/SplitHeading";
 import { Note } from "@/components/Note";
@@ -130,7 +131,7 @@ export function ProblemScene() {
     }
 
     mm.add(
-      { pinned: "(min-width: 1000px) and (min-height: 620px)", other: "(max-width: 999px), (max-height: 619px)" },
+      { pinned: WIDE_QUERY, other: "(max-width: 999px), (max-height: 619px)" },
       (ctx) => {
         if (ctx.conditions?.other) {
           simple();

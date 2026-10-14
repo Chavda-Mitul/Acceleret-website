@@ -31,7 +31,16 @@ export async function generateMetadata(props: PageProps<"/blog/category/[slug]">
   };
 }
 
-export default function CategoryPage(props: PageProps<"/blog/category/[slug]">) {
+/*
+ * The slug is checked before anything streams, so an unknown one gets a real 404
+ * (once the shell is sent the status is fixed at 200). That reads params outside
+ * <Suspense>, so the route blocks on its (cached) data instead of showing an
+ * instant shell on client navigation.
+ */
+export const instant = false;
+
+export default async function CategoryPage(props: PageProps<"/blog/category/[slug]">) {
+  if (!(await getCategory((await props.params).slug))) notFound();
   return (
     <>
       <section className="section blog-list blog-list--category" aria-labelledby="category-title">

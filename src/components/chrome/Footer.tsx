@@ -2,7 +2,7 @@ import Link from "next/link";
 import { site, addressText, phoneHref, whatsappHref } from "@/content/site";
 import { services } from "@/content/services";
 import { Logo } from "./Logo";
-import { InstagramIcon, LinkedInIcon } from "@/components/icons";
+import { FacebookIcon, InstagramIcon, LinkedInIcon } from "@/components/icons";
 import { MotionSwitch } from "@/components/motion/MotionToggle";
 
 /** Footer (brief §3): white logo with its tagline on deep blue, three columns, copyright. No Acceleret Media. */
@@ -80,8 +80,13 @@ export function Footer() {
                 <InstagramIcon size={20} />
               </a>
             ) : null}
-            {!contact.linkedin && !contact.instagram && showPending ? (
-              <span className="pending-tag pending-tag--dark">LinkedIn and Instagram links pending</span>
+            {contact.facebook ? (
+              <a href={contact.facebook} target="_blank" rel="noopener noreferrer" aria-label="Acceleret on Facebook">
+                <FacebookIcon size={20} />
+              </a>
+            ) : null}
+            {!contact.linkedin && !contact.instagram && !contact.facebook && showPending ? (
+              <span className="pending-tag pending-tag--dark">Social links pending</span>
             ) : null}
           </div>
         </div>

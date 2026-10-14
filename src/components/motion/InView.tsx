@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useRef, type ComponentPropsWithoutRef, type ElementType } from "react";
+import { SEEN_ABOVE } from "@/lib/motion";
 
 type Props<T extends ElementType> = {
   as?: T;
   /** Fraction of the element that must be visible. */
   threshold?: number;
-  /** Shrinks the viewport bottom so things start a little after they appear. */
+  /** Shrinks the viewport bottom so things start a little after they appear. The top is always SEEN_ABOVE. */
   rootMargin?: string;
 } & Omit<ComponentPropsWithoutRef<T>, "as">;
 
@@ -33,7 +34,7 @@ export function InView<T extends ElementType = "div">({
           io.disconnect();
         }
       },
-      { threshold, rootMargin },
+      { threshold, rootMargin: rootMargin.replace(/^\S+/, SEEN_ABOVE) },
     );
     io.observe(el);
     return () => io.disconnect();

@@ -23,7 +23,7 @@ export function Team() {
         <ul className="team__grid">
           {shown.map((p, i) => (
             <li key={p.name} className="person" data-pending={p.pending ? "true" : undefined}>
-              <SketchFrame radius={22} seed={i + 11} delay={i * 0.15}>
+              <SketchFrame radius={22} seed={i + 11} delay={i * 0.15} priority>
                 <div className="person__photo">
                   {p.photo ? (
                     <Image src={p.photo} alt={p.name} fill sizes="(max-width: 700px) 100vw, 30vw" />

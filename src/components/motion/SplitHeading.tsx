@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, useEffect, useRef, type CSSProperties, type ElementType, type ReactNode } from "react";
-import { useScene } from "@/lib/motion";
+import { SEEN_ABOVE, useScene } from "@/lib/motion";
 
 /**
  * A heading that arrives in one of two ways.
@@ -45,18 +45,20 @@ export function SplitHeading({
     const io = new IntersectionObserver(
       ([e]) => {
         if (e.isIntersecting) {
+          // First time in view, even on a page the visitor came back to: write it in.
+          el.removeAttribute("data-settled");
           el.classList.add("is-inview");
           io.disconnect();
         }
       },
-      { threshold: 0.5 },
+      { threshold: 0.5, rootMargin: `${SEEN_ABOVE} 0px 0px 0px` },
     );
     io.observe(el);
     return () => io.disconnect();
   }, [words, onLoad]);
 
-  useScene(ref, ({ gsap, SplitText, mode, el }) => {
-    if (words) return; // handwritten headings run in CSS
+  useScene(ref, ({ gsap, SplitText, mode, el, returning }) => {
+    if (words || returning) return; // handwritten headings run in CSS
 
     /* ---------------- lines rise */
     SplitText.create(el, {

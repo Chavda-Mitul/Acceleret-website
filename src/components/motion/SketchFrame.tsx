@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { seeded, sketchRoundRect } from "@/lib/geometry";
+import { SEEN_ABOVE } from "@/lib/motion";
 
 /**
  * Sketch first, then build, for a box: a pencil outline is drawn around it
@@ -52,7 +53,7 @@ export function SketchFrame({
           io.disconnect();
         }
       },
-      { threshold: 0.2, rootMargin: "0px 0px -6% 0px" },
+      { threshold: 0.2, rootMargin: `${SEEN_ABOVE} 0px -6% 0px` },
     );
     io.observe(el);
     return () => io.disconnect();

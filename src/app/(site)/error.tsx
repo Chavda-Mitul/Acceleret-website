@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import { site } from "@/content/site";
+import { SplitHeading } from "@/components/motion/SplitHeading";
 
 /** Runtime errors inside the site chrome. Reuses the 404 page's layout. */
 export default function Error({ error, retry }: { error: Error & { digest?: string }; retry: () => void }) {
@@ -18,9 +19,9 @@ export default function Error({ error, retry }: { error: Error & { digest?: stri
           <path d="M210 14 C 240 10, 250 60, 228 70 S 200 110, 250 96" className="not-found__pencil" />
           <circle cx="10" cy="60" r="6" className="not-found__start" />
         </svg>
-        <h1 id="err-title" className="t-h1">
+        <SplitHeading as="h1" id="err-title" className="t-h1" sketch onLoad>
           Something broke on our side.
-        </h1>
+        </SplitHeading>
         <p className="t-lead">Try again in a moment. If it keeps happening, write to {site.contact.email}.</p>
         <div className="not-found__actions">
           <button type="button" className="btn" onClick={() => retry()}>

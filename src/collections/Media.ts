@@ -1,7 +1,7 @@
 import type { CollectionConfig } from "payload";
-import { revalidateAfterChange, revalidateAfterDelete } from "./revalidate";
+import { BLOG_TAG, WORK_TAG, revalidates } from "./revalidate";
 
-/** Images for articles: covers, inline pictures and share images. */
+/** Images for articles and case studies: covers, inline pictures and share images. */
 export const Media: CollectionConfig = {
   slug: "media",
   access: { read: () => true },
@@ -32,8 +32,6 @@ export const Media: CollectionConfig = {
       },
     },
   ],
-  hooks: {
-    afterChange: [revalidateAfterChange],
-    afterDelete: [revalidateAfterDelete],
-  },
+  // Covers appear on the blog and on case studies.
+  hooks: revalidates(BLOG_TAG, WORK_TAG),
 };

@@ -244,7 +244,7 @@
 .pscene__noise {
   display: none;
 }
-.pscene.is-pinned .pscene__noise {
+:is(.pscene.is-pinned, [data-motion="full"][data-wide] .pscene) .pscene__noise {
   display: block;
   position: absolute;
   left: 50%;
@@ -324,7 +324,8 @@ html:not(.no-js) .pscene__closing .sw {
   clip-path: inset(-30% 104% -30% -8%);
 }
 .pscene__closing.is-written .sw {
-  animation: sw-write 0.6s cubic-bezier(0.45, 0.05, 0.55, 0.95) calc(0.1s + var(--i) * 0.1s) forwards;
+  /* same pace as a heading written on scroll */
+  animation: sw-write 0.75s var(--ease-write) calc(0.12s + var(--i) * 0.14s) forwards;
 }
 .pscene__mark {
   --dot: 0;
@@ -380,42 +381,42 @@ html:not(.no-js) .pscene__closing .sw {
 }
 
 /* --- pinned (full motion, large screens) --- */
-.pscene.is-pinned {
+:is(.pscene.is-pinned, [data-motion="full"][data-wide] .pscene) {
   padding-block: 0;
 }
-.pscene.is-pinned .pscene__track {
+:is(.pscene.is-pinned, [data-motion="full"][data-wide] .pscene) .pscene__track {
   height: 460vh;
 }
-.pscene.is-pinned .pscene__sticky {
+:is(.pscene.is-pinned, [data-motion="full"][data-wide] .pscene) .pscene__sticky {
   position: sticky;
   top: var(--header-h);
   height: calc(100svh - var(--header-h));
   overflow: clip;
 }
-.pscene.is-pinned .pscene__inner {
+:is(.pscene.is-pinned, [data-motion="full"][data-wide] .pscene) .pscene__inner {
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding-block: clamp(1rem, 3vh, 2.5rem);
 }
-.pscene.is-pinned .pscene__cols {
+:is(.pscene.is-pinned, [data-motion="full"][data-wide] .pscene) .pscene__cols {
   margin-top: clamp(1.5rem, 4vh, 3.5rem);
 }
-.pscene.is-pinned .pcol__stage {
+:is(.pscene.is-pinned, [data-motion="full"][data-wide] .pscene) .pcol__stage {
   height: clamp(220px, 34vh, 290px);
   overflow: visible;
   background: transparent;
   border-color: transparent;
 }
-.pscene.is-pinned .note {
+:is(.pscene.is-pinned, [data-motion="full"][data-wide] .pscene) .note {
   rotate: none;
 }
 /* no box drawn around the piles when pinned: the chat can use the full height */
-.pscene.is-pinned .pcol--wa .pcol__stage {
+:is(.pscene.is-pinned, [data-motion="full"][data-wide] .pscene) .pcol--wa .pcol__stage {
   padding-block: 0;
 }
-.pscene.is-pinned .pscene__finale {
+:is(.pscene.is-pinned, [data-motion="full"][data-wide] .pscene) .pscene__finale {
   position: absolute;
   left: var(--gutter);
   right: var(--gutter);
@@ -424,8 +425,23 @@ html:not(.no-js) .pscene__closing .sw {
   translate: 0 -50%;
   pointer-events: none;
 }
-.pscene.is-pinned .pscene__line {
+:is(.pscene.is-pinned, [data-motion="full"][data-wide] .pscene) .pscene__line {
   transform: scaleX(0);
+}
+/* short laptop screens (1366×768, 1024×768): tighten so the scene fits the pinned frame */
+@media (max-height: 820px) {
+  :is(.pscene.is-pinned, [data-motion="full"][data-wide] .pscene) .pscene__inner {
+    padding-block: 0.75rem;
+  }
+  :is(.pscene.is-pinned, [data-motion="full"][data-wide] .pscene) .pscene__title {
+    font-size: clamp(2.1rem, 6.6vh, 3.6rem);
+  }
+  :is(.pscene.is-pinned, [data-motion="full"][data-wide] .pscene) .pscene__cols {
+    margin-top: clamp(1.75rem, 4.5vh, 2.5rem);
+  }
+  :is(.pscene.is-pinned, [data-motion="full"][data-wide] .pscene) .pcol__stage {
+    height: clamp(190px, 28vh, 290px);
+  }
 }
 
 @media (max-width: 999px) {
@@ -451,8 +467,12 @@ html:not(.no-js) .pscene__closing .sw {
 .band {
   position: relative;
   overflow: clip;
-  padding-block: clamp(2.5rem, 2rem + 4vw, 6rem);
-  border-block: 1px solid var(--rule);
+  padding-block: calc(clamp(2.5rem, 2rem + 4vw, 6rem) + 1px);
+  /* the rules are drawn inside the box, not as a border, so the spine runs
+     through them instead of stopping 1px short at each one */
+  box-shadow:
+    inset 0 1px var(--rule),
+    inset 0 -1px var(--rule);
   background: #fff;
 }
 .band__row {
@@ -567,10 +587,10 @@ html:not(.no-js) .pscene__closing .sw {
 }
 
 /* --- horizontal (full motion, wide screens) --- */
-.journey.is-horizontal {
+:is(.journey.is-horizontal, [data-motion="full"][data-wide] .journey) {
   padding-block: 0;
 }
-.journey.is-horizontal .journey__sticky {
+:is(.journey.is-horizontal, [data-motion="full"][data-wide] .journey) .journey__sticky {
   position: sticky;
   top: var(--header-h);
   height: calc(100svh - var(--header-h));
@@ -579,7 +599,7 @@ html:not(.no-js) .pscene__closing .sw {
   flex-direction: column;
   justify-content: center;
 }
-.journey.is-horizontal .journey__wrap {
+:is(.journey.is-horizontal, [data-motion="full"][data-wide] .journey) .journey__wrap {
   max-width: none;
   padding-inline: 0;
   /* panels fade out as they reach the spine and are gone past it: clear up to
@@ -587,30 +607,39 @@ html:not(.no-js) .pscene__closing .sw {
   --edge: max(var(--gutter), (100% - var(--max)) / 2);
   -webkit-mask-image: linear-gradient(to right, transparent calc(var(--edge) / 2), #000 var(--edge));
   mask-image: linear-gradient(to right, transparent calc(var(--edge) / 2), #000 var(--edge));
+  /* the mask hides anything outside this box; room for the "e.g." notes
+     that sit above each panel, without moving the panels */
+  padding-block: 3.5rem;
+  margin-block: -3.5rem;
 }
-.journey.is-horizontal .journey__panels {
+/* the scroll distance, before GSAP measures it: intro panel plus one per service,
+   less the screen width, plus the screen height (as ServicesJourney sets it) */
+[data-motion="full"][data-wide] .journey__track {
+  height: calc(min(52vw, 760px) + var(--panels, 6) * min(78vw, 1180px) - 100vw + 100vh);
+}
+:is(.journey.is-horizontal, [data-motion="full"][data-wide] .journey) .journey__panels {
   display: flex;
   gap: 0;
   width: max-content;
   will-change: transform;
 }
-.journey.is-horizontal .jpanel {
+:is(.journey.is-horizontal, [data-motion="full"][data-wide] .journey) .jpanel {
   flex: none;
   width: min(78vw, 1180px);
   padding-inline: max(var(--gutter), 4vw);
 }
-.journey.is-horizontal .jpanel--intro {
+:is(.journey.is-horizontal, [data-motion="full"][data-wide] .journey) .jpanel--intro {
   width: min(52vw, 760px);
   padding-left: max(var(--gutter), (100vw - var(--max)) / 2);
   align-self: center;
 }
-.journey.is-horizontal .jpanel__figure {
+:is(.journey.is-horizontal, [data-motion="full"][data-wide] .journey) .jpanel__figure {
   max-height: 62vh;
 }
-.journey.is-horizontal .jpanel__figure .dg {
+:is(.journey.is-horizontal, [data-motion="full"][data-wide] .journey) .jpanel__figure .dg {
   max-height: calc(62vh - 10%);
 }
-.journey.is-horizontal .journey__rail {
+:is(.journey.is-horizontal, [data-motion="full"][data-wide] .journey) .journey__rail {
   display: block;
   position: absolute;
   left: max(var(--gutter), (100vw - var(--max)) / 2);
@@ -757,7 +786,7 @@ html:not(.no-js) .pscene__closing .sw {
 }
 .hn[data-inview="true"] .hn__text {
   clip-path: inset(-20% -4% -20% -4%);
-  transition: clip-path 1.1s cubic-bezier(0.45, 0.05, 0.55, 0.95) var(--hn-delay, 0.1s);
+  transition: clip-path 1.1s var(--ease-write) var(--hn-delay, 0.1s);
 }
 .hn[data-inview="true"] .hn__arrow path {
   stroke-dashoffset: 0;
@@ -820,11 +849,11 @@ html:not(.no-js) .pscene__closing .sw {
   }
 }
 .split--hand[data-write="view"].is-inview .sw {
-  animation: sw-write 0.75s cubic-bezier(0.45, 0.05, 0.55, 0.95) calc(0.12s + var(--i) * 0.14s) both;
+  animation: sw-write 0.75s var(--ease-write) calc(0.12s + var(--i) * 0.14s) both;
 }
 /* on arrival: a touch quicker, so the page title is readable straight away */
 .split--hand[data-write="load"] .sw {
-  animation: sw-write 0.6s cubic-bezier(0.45, 0.05, 0.55, 0.95) calc(0.04s + var(--i) * 0.11s) both;
+  animation: sw-write 0.6s var(--ease-write) calc(0.04s + var(--i) * 0.11s) both;
 }
 .split--hand[data-write="view"]:not(.is-inview) .sw {
   clip-path: inset(-30% 104% -30% -8%);
@@ -836,6 +865,13 @@ html:not(.no-js) .pscene__closing .sw {
 /* the home hero only introduces itself once per visit */
 .hero[data-played="true"] .split--hand .sw {
   animation: none;
+}
+/* coming back to a page (Back/Forward): what was already written stays written */
+.split--hand[data-settled][data-write="load"] .sw,
+.split--hand[data-settled].is-inview .sw,
+[data-settled] .pscene__closing.is-written .sw {
+  animation: none;
+  clip-path: none;
 }
 
 /* diagrams: their own pencil layer draws, then the crisp diagram inks in */
@@ -914,6 +950,11 @@ html:not(.no-js) .pscene__closing .sw {
   opacity: 0;
   translate: 0 10px;
 }
+/* a keyboard user tabbing into a box that hasn't built yet sees it at once */
+.sf:focus-within > :not(.sf__svg) {
+  opacity: 1;
+  translate: none;
+}
 .sf[data-inview="true"] > :not(.sf__svg) {
   opacity: 1;
   translate: none;
@@ -968,7 +1009,7 @@ html:not(.no-js) .pscene__closing .sw {
 .pcol--xl .pcol__label h3 {
   margin-top: 2.6rem;
 }
-.pscene.is-pinned .pcol--xl .pcol__label h3 {
+:is(.pscene.is-pinned, [data-motion="full"][data-wide] .pscene) .pcol--xl .pcol__label h3 {
   margin-top: 1.35rem;
 }
 
@@ -979,7 +1020,7 @@ html:not(.no-js) .pscene__closing .sw {
   display: none;
   margin-top: 2rem;
 }
-.journey.is-horizontal .journey__keep {
+:is(.journey.is-horizontal, [data-motion="full"][data-wide] .journey) .journey__keep {
   display: inline-flex;
 }
 .jpanel__visual {

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useEffect, useLayoutEffect, useRef, useState, type FormEvent } from "react";
+import { Component, useActionState, useEffect, useLayoutEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { submitWalkthrough, type ContactState } from "@/app/(site)/contact/actions";
 import { validateLead, limits, type LeadErrors, type LeadField, type LeadValues } from "@/app/(site)/contact/validation";
 import { site, whatsappHref } from "@/content/site";
@@ -18,6 +18,26 @@ const fields: { name: LeadField; label: string; type: string; autoComplete: stri
 
 const MESSAGE_LABEL = "What does your team currently manage on WhatsApp, Excel or by memory?";
 
+const NOT_SENT = `That didn't send. Check your connection and try again, or email ${site.contact.email}.`;
+
+/**
+ * A send that never reaches the server (offline, dropped connection) throws out of
+ * useActionState. Catch it here so the form comes back with what was typed,
+ * instead of the page-level error screen.
+ */
+class SendBoundary extends Component<{ onError: () => void; children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  componentDidCatch() {
+    this.props.onError();
+  }
+  render() {
+    return this.state.failed ? null : this.props.children;
+  }
+}
+
 /**
  * Contact form (brief §4 Contact). Checks fields as you go and on submit,
  * then the server action checks again and delivers. Works without JavaScript.
@@ -26,27 +46,58 @@ export function ContactForm() {
   // A fresh form after a successful send, once the visitor navigates away and back (Activity).
   const [instance, setInstance] = useState(0);
   const sent = useRef(false);
+  // What was typed into the last send, to restore it if that send fails in transit.
+  const submitted = useRef<Partial<LeadValues>>({});
+  const [retry, setRetry] = useState<Partial<LeadValues> | null>(null);
   useLayoutEffect(
     () => () => {
       if (sent.current) {
         sent.current = false;
+        setRetry(null);
         setInstance((n) => n + 1);
       }
     },
     [],
   );
-  return <Form key={instance} onSent={() => (sent.current = true)} />;
+
+  const onError = () => {
+    setRetry(submitted.current);
+    setInstance((n) => n + 1);
+  };
+
+  return (
+    <SendBoundary key={instance} onError={onError}>
+      <Form
+        onSent={() => (sent.current = true)}
+        onSubmitValues={(v) => (submitted.current = v)}
+        retry={retry}
+      />
+    </SendBoundary>
+  );
 }
 
-function Form({ onSent }: { onSent: () => void }) {
-  const [state, action, pending] = useActionState(submitWalkthrough, initial);
+function Form({
+  onSent,
+  onSubmitValues,
+  retry,
+}: {
+  onSent: () => void;
+  onSubmitValues: (values: LeadValues) => void;
+  retry: Partial<LeadValues> | null;
+}) {
+  const [state, action, pending] = useActionState(
+    submitWalkthrough,
+    retry ? ({ status: "error", message: NOT_SENT, errors: {}, values: retry } satisfies ContactState) : initial,
+  );
   const [clientErrors, setClientErrors] = useState<LeadErrors>({});
   const [touched, setTouched] = useState<Partial<Record<LeadField, boolean>>>({});
   const formRef = useRef<HTMLFormElement>(null);
   const summaryRef = useRef<HTMLDivElement>(null);
-  const startedRef = useRef<HTMLInputElement>(null);
   const wa = whatsappHref();
 
+  // When the form appeared, for the "filled faster than a person can" check. The
+  // input has no defaultValue, so a re-render can't reset it to an empty value.
+  const startedRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (startedRef.current) startedRef.current.value = String(Date.now());
   }, []);
@@ -98,7 +149,9 @@ function Form({ onSent }: { onSent: () => void }) {
   };
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
-    const errs = validateLead(readValues());
+    const values = readValues();
+    const errs = validateLead(values);
+    onSubmitValues(values);
     if (Object.keys(errs).length > 0) {
       e.preventDefault();
       setClientErrors(errs);
@@ -226,7 +279,7 @@ function Form({ onSent }: { onSent: () => void }) {
       <div className="lead-form__trap" aria-hidden="true">
         <label htmlFor="f-website">Website</label>
         <input id="f-website" name="website" type="text" tabIndex={-1} autoComplete="off" />
-        <input ref={startedRef} name="started" type="hidden" defaultValue="" />
+        <input ref={startedRef} name="started" type="hidden" />
       </div>
 
       <div className="lead-form__foot">

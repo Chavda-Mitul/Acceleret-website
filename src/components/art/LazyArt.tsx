@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import type { Sketch } from "@/lib/sketch";
 import { ArtSvg } from "./ArtSvg";
+import { SEEN_ABOVE } from "@/lib/motion";
 
 type Drawing = { sketch: Sketch; width: number; height: number };
 
@@ -62,7 +63,7 @@ export function LazyArt({
         io.disconnect();
         requestAnimationFrame(() => setInView(true));
       },
-      { threshold: 0.2, rootMargin: "0px 0px -8% 0px" },
+      { threshold: 0.2, rootMargin: `${SEEN_ABOVE} 0px -8% 0px` },
     );
     io.observe(el);
     return () => io.disconnect();

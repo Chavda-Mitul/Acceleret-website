@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, type ReactNode } from "react";
+import { useRef, type ReactNode, type CSSProperties } from "react";
 import { build } from "@/content/home";
 import { services, servicesIntro, type ServiceId } from "@/content/services";
 import { useScene } from "@/lib/motion";
+import { WIDE_QUERY } from "@/lib/motion-script";
 import { Spine } from "@/components/motion/Spine";
 import { SplitHeading } from "@/components/motion/SplitHeading";
 import { SketchSolid } from "@/components/motion/SketchSolid";
@@ -24,7 +25,7 @@ export function ServicesJourney({ diagrams }: { diagrams: Record<ServiceId, Reac
 
   useScene(ref, ({ gsap, ScrollTrigger, mode, mm, el }) => {
     if (mode === "calm") return;
-    mm.add("(min-width: 1000px) and (min-height: 620px)", () => {
+    mm.add(WIDE_QUERY, () => {
       el.classList.add("is-horizontal");
       const track = el.querySelector<HTMLElement>(".journey__track")!;
       const panels = el.querySelector<HTMLElement>(".journey__panels")!;
@@ -80,7 +81,7 @@ export function ServicesJourney({ diagrams }: { diagrams: Record<ServiceId, Reac
   return (
     <section ref={ref} className="journey" aria-labelledby="build-title">
       <Spine />
-      <div className="journey__track">
+      <div className="journey__track" style={{ "--panels": services.length } as CSSProperties}>
         <div className="journey__sticky">
           <div className="wrap journey__wrap">
             <div className="journey__panels">

@@ -1,10 +1,17 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { site } from "@/content/site";
 import { SplitHeading } from "@/components/motion/SplitHeading";
+import { DocumentTitle } from "@/components/DocumentTitle";
+
+const TITLE = "Page not found | Acceleret";
+
+export const metadata: Metadata = { title: TITLE };
 
 export default function NotFound() {
   return (
     <section className="not-found" aria-labelledby="nf-title">
+      <DocumentTitle title={TITLE} />
       <div className="wrap not-found__inner">
         <svg className="not-found__art" viewBox="0 0 360 120" aria-hidden focusable={false}>
           <path d="M10 60 H120 Q140 60 140 40 V30 Q140 14 156 14 H210" className="not-found__route" />

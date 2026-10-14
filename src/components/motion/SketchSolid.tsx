@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, type ElementType, type ReactNode } from "react";
 import { seeded, sketchRect, wobbleAlong } from "@/lib/geometry";
+import { SEEN_ABOVE } from "@/lib/motion";
 
 const NS = "http://www.w3.org/2000/svg";
 
@@ -68,7 +69,7 @@ export function SketchSolid({
           io.disconnect();
         }
       },
-      { threshold, rootMargin: "0px 0px -6% 0px" },
+      { threshold, rootMargin: `${SEEN_ABOVE} 0px -6% 0px` },
     );
     io.observe(el);
     return () => io.disconnect();

@@ -28,8 +28,8 @@ export default function ProductsPage() {
       <section className="section products" aria-label="Products">
         <Spine />
         <div className="wrap products__list">
-          {products.map((p) => (
-            <SketchFrame key={p.name} radius={30} seed={9} priority>
+          {products.map((p, i) => (
+            <SketchFrame key={p.name} radius={30} seed={9 + i * 4} priority>
               <article className="product">
                 <div className="product__text">
                   <div className="product__brand">

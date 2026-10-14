@@ -1,5 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
-import type { CaseStudy } from "@/content/work";
+import type { CaseStudy } from "@/payload-types";
+import { coverOf } from "@/lib/work";
 import { SketchFrame } from "@/components/motion/SketchFrame";
 
 /** A case study as its own little route: problem (pencil) → what we built → what changed. */
@@ -15,19 +17,32 @@ export function WorkCard({
   index?: number;
   /** Title, one-line result and Read only (brief §4 Home section 5). */
   compact?: boolean;
-  /** First row on /work: visible on first paint (see SketchFrame). */
+  /** First row on /case-studies: visible on first paint (see SketchFrame). */
   priority?: boolean;
 }) {
+  const cover = coverOf(study);
+  const card = cover?.sizes?.card;
+  const classes = ["work-card", compact && "work-card--compact", cover && "work-card--cover"].filter(Boolean).join(" ");
+
   return (
-    <SketchFrame radius={26} seed={index + 5} delay={index * 0.18} priority={priority}>
-      <article className={`work-card${compact ? " work-card--compact" : ""}`}>
+    <SketchFrame radius={26} seed={index + 5} priority={priority}>
+      <article className={classes}>
+        {cover ? (
+          <div className="work-card__cover">
+            <Image
+              src={card?.url ?? cover.url!}
+              alt=""
+              width={card?.width ?? cover.width ?? 720}
+              height={card?.height ?? cover.height ?? 450}
+              sizes="(min-width: 900px) 320px, 100vw"
+              priority={priority}
+            />
+          </div>
+        ) : null}
         <div className="work-card__head">
-          <p className="work-card__client">
-            {study.client}
-            {study.sample ? <span className="pending-tag">Sample</span> : null}
-          </p>
+          <p className="work-card__client">{study.client}</p>
           <Heading className="t-h3 work-card__title">
-            <Link href={`/work/${study.slug}`} className="work-card__link">
+            <Link href={`/case-studies/${study.slug}`} className="work-card__link">
               {study.title}
             </Link>
           </Heading>

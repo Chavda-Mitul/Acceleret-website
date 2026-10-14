@@ -39,5 +39,5 @@ export const build = {
 };
 
 export const proof = {
-  heading: "Work",
+  heading: "Case studies",
 };

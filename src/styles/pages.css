@@ -514,21 +514,17 @@
 .case__back {
   margin-bottom: 2rem;
 }
-.case__sample {
+.case__client {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 0.6rem;
-  margin-bottom: 2rem;
-  padding: 0.9rem 1.1rem;
-  border-radius: 14px;
-  border: 1px dashed var(--pencil);
-  color: var(--ink-2);
-  font-size: 0.95rem;
-}
-.case__client {
+  align-items: baseline;
+  gap: 0.35rem 1rem;
   font-weight: 400;
   color: var(--electric-ink);
+}
+.case__tags {
+  font-size: 0.95rem;
+  color: var(--ink-3);
 }
 .case__title {
   margin-top: 0.75rem;
@@ -537,6 +533,18 @@
 .case__result {
   margin-top: 1.5rem;
   max-width: 40rem;
+}
+.case__cover {
+  margin: clamp(2rem, 4vw, 3.5rem) 0 0;
+  border-radius: 26px;
+  overflow: hidden;
+  aspect-ratio: 16 / 7;
+  background: var(--mist);
+}
+.case__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .case__route {
   position: relative;
@@ -608,12 +616,19 @@
   background: #fff;
   font-weight: 400;
 }
+.case__stack {
+  margin-top: 1.25rem;
+  color: var(--ink-2);
+}
+.case__stack-label {
+  color: var(--ink-3);
+}
 .case__outcomes {
   list-style: none;
   margin: 1rem 0 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
   gap: 1rem;
 }
 .case__outcomes li {
@@ -858,7 +873,7 @@
   text-decoration: underline;
   text-decoration-color: var(--rule);
   text-underline-offset: 4px;
-  transition: text-decoration-color 0.2s;
+  transition: text-decoration-color 0.25s var(--ease-out);
 }
 .reach-list a:hover {
   text-decoration-color: var(--electric);
@@ -876,25 +891,13 @@
   border-radius: 999px;
   border: 1px solid var(--rule);
   color: var(--deep);
+  transition:
+    border-color 0.25s var(--ease-out),
+    color 0.25s var(--ease-out);
 }
 .reach-social a:hover {
   border-color: var(--electric);
   color: var(--electric);
-}
-.slot {
-  display: grid;
-  gap: 0.6rem;
-  justify-items: start;
-  margin-top: 0.5rem;
-  padding: 1.5rem;
-  border-radius: 20px;
-  background: var(--mist);
-}
-.slot svg {
-  color: var(--electric);
-}
-.slot p {
-  color: var(--ink-2);
 }
 @media (max-width: 899px) {
   .contact__grid {

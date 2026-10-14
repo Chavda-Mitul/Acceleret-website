@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useSyncExternalStore, type DependencyList, type RefObject } from "react";
+import { useEffect, useLayoutEffect, useRef, useSyncExternalStore, type DependencyList, type RefObject } from "react";
 import { MOTION_KEY as KEY, type MotionMode } from "./motion-script";
 
 export type { MotionMode } from "./motion-script";
@@ -46,6 +46,16 @@ export function useMotionMode(): MotionMode {
   return useSyncExternalStore(subscribe, getMotionMode, () => "full");
 }
 
+/* ------------------------------------------------------------------ seen once */
+
+/**
+ * Top rootMargin for "play once when seen" observers. Stretching the viewport
+ * far upwards makes anything already scrolled past (a fast scroll, the End
+ * key, a restored scroll position) count as seen, so it is finished when the
+ * visitor scrolls back up instead of waiting there unwritten.
+ */
+export const SEEN_ABOVE = "100000px";
+
 /* ------------------------------------------------------------------ GSAP, loaded on demand */
 
 type GsapKit = {
@@ -80,12 +90,57 @@ export function queueRefresh() {
   }, 120);
 }
 
-export type SceneApi = GsapKit & { el: HTMLElement; mode: MotionMode; mm: gsap.MatchMedia };
+/* ------------------------------------------------------------------ coming back to a page */
+
+/**
+ * Next keeps recently visited pages mounted but hidden (<Activity>), so going
+ * Back shows the same DOM again and re-runs its effects. Returns a ref that is
+ * true while this component is being shown again after its page was hidden,
+ * so entrance animations can settle instead of replaying.
+ *
+ * Calls `onReturn` before the returning page paints. The hide is recorded a
+ * tick after cleanup, so the dev-mode double mount doesn't count as a return.
+ */
+export function useReturn(onReturn?: () => void) {
+  const returning = useRef(false);
+  const state = useRef({ hidden: false, pending: 0 });
+  const cb = useRef(onReturn);
+  useEffect(() => {
+    cb.current = onReturn;
+  });
+  useLayoutEffect(() => {
+    const s = state.current;
+    if (s.pending) {
+      window.clearTimeout(s.pending);
+      s.pending = 0;
+    } else if (s.hidden) {
+      returning.current = true;
+      cb.current?.();
+    }
+    return () => {
+      s.pending = window.setTimeout(() => {
+        s.pending = 0;
+        s.hidden = true;
+      });
+    };
+  }, []);
+  return returning;
+}
+
+export type SceneApi = GsapKit & {
+  el: HTMLElement;
+  mode: MotionMode;
+  mm: gsap.MatchMedia;
+  /** The page is being shown again after Back/Forward: skip entrances, keep scroll-linked scenes. */
+  returning: boolean;
+};
 
 /**
  * Sets up GSAP animations scoped to `ref` once GSAP has loaded. Everything
  * created inside `setup` (tweens, ScrollTriggers, SplitText) is reverted on
  * unmount, when the page is hidden, and when the motion mode changes.
+ * When the page is shown again, `returning` is true and `el` carries
+ * data-settled, which CSS uses to stop one-shot entrances replaying.
  */
 export function useScene<T extends HTMLElement>(
   ref: RefObject<T | null>,
@@ -93,6 +148,7 @@ export function useScene<T extends HTMLElement>(
   deps: DependencyList = [],
 ) {
   const mode = useMotionMode();
+  const returning = useReturn(() => ref.current?.setAttribute("data-settled", "true"));
   const setupRef = useRef(setup);
   useEffect(() => {
     setupRef.current = setup;
@@ -109,7 +165,7 @@ export function useScene<T extends HTMLElement>(
       if (cancelled || !ref.current) return;
       mm = k.gsap.matchMedia(el);
       ctx = k.gsap.context(() => {
-        extra = setupRef.current({ ...k, el, mode, mm: mm! });
+        extra = setupRef.current({ ...k, el, mode, mm: mm!, returning: returning.current });
       }, el);
       queueRefresh();
     });

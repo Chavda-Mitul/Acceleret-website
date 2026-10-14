@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { heroObjects } from "./heroArt";
 import { cumulative, dedupe, orthoWaypoints, roundedPath, type Axis, type Pt } from "@/lib/geometry";
-import { useMotionMode } from "@/lib/motion";
+import { useMotionMode, useReturn } from "@/lib/motion";
 import { subscribeScroll } from "@/lib/scroll";
 
 /** "sketch": the pencil draws every kind of software; "built": the route connects them and they ink in. */
@@ -166,13 +166,9 @@ export function HeroSystems() {
     };
   }, [ready]);
 
-  // When the page is hidden (navigating away keeps it mounted), mark the intro
-  // as played so coming back doesn't replay it. Done on hide, not after the
-  // intro, so removing the animations never repaints the page in view.
-  useLayoutEffect(() => {
-    const hero = mapRef.current?.closest(".hero");
-    return () => hero?.setAttribute("data-played", "true");
-  }, []);
+  // Navigating away keeps the page mounted; when it is shown again, mark the
+  // intro as played (before that paint) so coming back doesn't replay it.
+  useReturn(() => mapRef.current?.closest(".hero")?.setAttribute("data-played", "true"));
 
   /* ---------------------------------------------------------- the dot travelling */
   const motion = useMotionMode();

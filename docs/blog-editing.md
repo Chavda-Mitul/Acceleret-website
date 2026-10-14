@@ -1,4 +1,4 @@
-# Writing for the Acceleret blog
+# Writing for the Acceleret blog and case studies
 
 Everything happens at **https://acceleret.com/admin**. Sign in with the email and password an
 admin gave you. Nothing here needs code or a redeploy: publish, and the article is on the site
@@ -86,3 +86,23 @@ always fill the column.
   it as a draft.
 - **Delete** removes it for good. Prefer unpublishing.
 - Every save is kept under **Versions**, so you can look back or restore an earlier one.
+
+## Case studies
+
+Case studies live under **Case studies** in the /admin sidebar. Each published one gets a page
+at `/case-studies/<slug>` and a card on `/case-studies`; the first three also appear on the home
+page. They save, publish, unpublish and keep versions just like articles.
+
+- **Title, Client, Result**: the heading, the line above it, and the one-line outcome under it.
+  The result is also the search description if the SEO tab is left empty.
+- **Cover image**: shown on the card and at the top of the page. Wide pictures work best.
+- **Summary**: the card on `/case-studies`, one sentence each for the problem, what we built and
+  what changed.
+- **Situation** and **What we built**: the two paragraphs on the page. Keep them short.
+- **Features**: three to five one-line points under "What we built".
+- **Outcomes**: three is best. Put a number in **Value** when there is one ("30%", "5k+").
+- **Quote**: only a real quote from the client. The credit reads "Name, Role, Client"; leave the
+  name empty to show the role only.
+- **Order** (sidebar): lower numbers come first. The three lowest are the ones on the home page.
+- **Tags** and **Tech stack** (sidebar): tags show next to the client name, the stack as a
+  "Built with" line.
