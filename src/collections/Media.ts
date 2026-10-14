@@ -16,7 +16,11 @@ export const Media: CollectionConfig = {
       { name: "content", width: 1440, withoutEnlargement: true },
       { name: "og", width: 1200, height: 630, position: "centre" },
     ],
-    adminThumbnail: "card",
+    // The uncropped picture, as articles show it. The "card" crop cut wide images short in the editor.
+    adminThumbnail: ({ doc }) => {
+      const sizes = doc.sizes as { content?: { url?: string | null } } | undefined;
+      return sizes?.content?.url ?? (doc.url as string | undefined) ?? null;
+    },
   },
   fields: [
     {

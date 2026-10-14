@@ -32,7 +32,8 @@ The toolbar at the top, and typing **/** on an empty line, give you everything e
 | **Headings** | H2 for each main section, H3 for parts inside it, H4 for small labels. Don't skip levels. The title is already the page's H1. The H2s and H3s become the "In this article" list. |
 | **Lists** | Bulleted, numbered, or checklist. |
 | **Links** | Select text, then click the link button. Choose **Internal link** to point to another article. For other sites, paste the full address. Tick *Open in new tab* for other sites, and *nofollow* for paid, sponsored or untrusted links. |
-| **Images** | **/upload** or the image button. Every image needs **alt text**: one sentence describing it for people who can't see it. Google reads it too. Add a **caption** if the picture needs explaining. |
+| **Images** | **/upload** or the image button, or drag a picture file into the article, or paste one. Every image needs **alt text**: one sentence describing it for people who can't see it. Google reads it too. Add a **caption** with the pencil button on the image if the picture needs explaining. |
+| **Moving things** | Point at an image (or a paragraph, table or box) and a **⋮⋮** grip appears to its left. Drag the grip up or down; a blue line shows where it will land. Dragging the picture itself does nothing. |
 | **Tables** | **/table**. Keep the first row as the header. Wide tables scroll sideways on phones by themselves. |
 | **Quote** | A line worth pulling out. It shows in handwriting. |
 | **Callout** | One point readers must not miss: a note, tip or warning. |
@@ -41,6 +42,11 @@ The toolbar at the top, and typing **/** on an empty line, give you everything e
 | **Divider** | A dotted line between sections. |
 
 Bold appears on the site as a soft highlight rather than heavy type, to match the site's style.
+
+An image always sits between paragraphs, never inside one: dropped in the middle of a sentence, it
+goes after that paragraph. To put it between two sentences, press Enter there first. Small images
+show at their own size, and the align buttons can place them left, centre or right. Large images
+always fill the column.
 
 ## The SEO tab
 

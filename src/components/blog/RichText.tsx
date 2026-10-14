@@ -69,9 +69,19 @@ export function RichText({ data }: { data: Post["content"] }) {
       const src = doc.sizes?.content?.url ?? doc.url;
       const width = doc.sizes?.content?.width ?? doc.width ?? 1440;
       const height = doc.sizes?.content?.height ?? doc.height ?? 810;
+      // Never wider than the file itself, so a small logo isn't blown up to the full column.
+      // Narrower images follow the alignment chosen in the editor.
+      const shown = Math.min(width, 720);
       return (
-        <figure className="prose__figure">
-          <Image src={src} alt={doc.alt} width={width} height={height} sizes="(min-width: 760px) 720px, 100vw" />
+        <figure className="prose__figure" data-align={node.format || undefined}>
+          <Image
+            src={src}
+            alt={doc.alt}
+            width={width}
+            height={height}
+            sizes={`(min-width: 760px) ${shown}px, 100vw`}
+            style={{ maxWidth: width }}
+          />
           {caption ? <figcaption>{caption}</figcaption> : null}
         </figure>
       );

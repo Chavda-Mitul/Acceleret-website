@@ -70,6 +70,16 @@ test("the CMS stays out of search engines", async ({ request }) => {
   expect(admin.headers()["x-robots-tag"]).toContain("noindex");
 });
 
+// Critical-CH makes Chrome request a page twice on a first visit (next.config.ts).
+test("no page asks Chrome to load it twice", async ({ request }) => {
+  for (const path of ["/", "/blog", "/admin"]) {
+    const res = await request.get(path, { maxRedirects: 0 });
+    expect(res.headers()["critical-ch"], path).toBeUndefined();
+  }
+  const admin = await request.get("/admin", { maxRedirects: 0 });
+  expect(admin.headers()["accept-ch"]).toContain("Sec-CH-Prefers-Color-Scheme");
+});
+
 test("drafts are not readable without signing in", async ({ request }) => {
   const res = await request.get("/api/posts?draft=true&limit=100");
   expect(res.ok()).toBe(true);

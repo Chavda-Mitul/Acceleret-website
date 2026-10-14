@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 
 import config from '@payload-config'
 import { RootPage, generatePageMetadata } from '@payloadcms/next/views'
+import { connection } from 'next/server'
 import { importMap } from '../importMap'
 
 // The admin is fully dynamic (signed-in user, live data); instant-navigation checks don't apply.
@@ -18,10 +19,15 @@ type Args = {
   }>
 }
 
-export const generateMetadata = ({ params, searchParams }: Args): Promise<Metadata> =>
-  generatePageMetadata({ config, params, searchParams })
+// connection(): see the note in ../../layout.tsx.
+export const generateMetadata = async ({ params, searchParams }: Args): Promise<Metadata> => {
+  await connection()
+  return generatePageMetadata({ config, params, searchParams })
+}
 
-const Page = ({ params, searchParams }: Args) =>
-  RootPage({ config, params, searchParams, importMap })
+const Page = async ({ params, searchParams }: Args) => {
+  await connection()
+  return RootPage({ config, params, searchParams, importMap })
+}
 
 export default Page

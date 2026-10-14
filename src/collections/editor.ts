@@ -22,8 +22,15 @@ import {
   UnderlineFeature,
   UnorderedListFeature,
   UploadFeature,
+  createServerFeature,
   lexicalEditor,
 } from "@payloadcms/richtext-lexical";
+
+/** Keeps inserted images from cutting a paragraph in two (src/collections/editor.client.tsx). */
+const ImagePlacementFeature = createServerFeature({
+  feature: { ClientFeature: "@/collections/editor.client#ImagePlacementFeatureClient" },
+  key: "imagePlacement",
+});
 
 /* Blocks the writer can drop into an article. Each one has a renderer in src/components/blog/RichText.tsx. */
 
@@ -115,6 +122,7 @@ export const blogEditor = lexicalEditor({
         media: { fields: [{ name: "caption", type: "text" }] },
       },
     }),
+    ImagePlacementFeature(),
     EXPERIMENTAL_TableFeature(),
     BlocksFeature({ blocks: [Callout, Faq, Cta] }),
     FixedToolbarFeature(),

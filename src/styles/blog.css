@@ -381,6 +381,14 @@
   height: auto;
   border-radius: 18px;
 }
+/* Alignment set in the editor; only visible on images narrower than the column. */
+.prose__figure[data-align="center"] img {
+  margin-inline: auto;
+}
+.prose__figure[data-align="right"] img,
+.prose__figure[data-align="end"] img {
+  margin-left: auto;
+}
 .prose__figure figcaption {
   margin-top: 0.6rem;
   font-size: 0.9375rem;

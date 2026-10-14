@@ -79,4 +79,25 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withPayload(nextConfig, { devBundleServerPackages: false });
+const withCms = withPayload(nextConfig, { devBundleServerPackages: false });
+
+/*
+ * withPayload sends `Accept-CH`, `Vary` and `Critical-CH: Sec-CH-Prefers-Color-Scheme`
+ * on every URL, so the admin can pick light or dark on its first render. Critical-CH
+ * makes Chrome discard the first response and request the page again with the hint:
+ * each first visit to the public site was fetched twice, and opening
+ * /admin/collections/posts/create that way created two drafts, because Payload
+ * creates the draft while rendering that page. Keep the hint on /admin only, without
+ * Critical-CH; the admin corrects its theme in the browser anyway.
+ */
+export default {
+  ...withCms,
+  async headers() {
+    const rules = (await withCms.headers?.()) ?? [];
+    return rules.map((rule) =>
+      rule.headers.some((h) => h.key === "Critical-CH")
+        ? { ...rule, source: "/admin/:path*", headers: rule.headers.filter((h) => h.key !== "Critical-CH") }
+        : rule,
+    );
+  },
+} satisfies NextConfig;
