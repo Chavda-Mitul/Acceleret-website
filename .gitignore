@@ -34,9 +34,6 @@ yarn-error.log*
 .env*
 !.env.example
 
-# vercel
-.vercel
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
@@ -53,5 +50,5 @@ next-env.d.ts
 /.claude
 skills-lock.json
 
-# blog images when no Vercel Blob token is set (src/collections/Media.ts)
+# blog images uploaded through the CMS (src/collections/Media.ts)
 /media
