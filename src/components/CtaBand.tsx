@@ -5,6 +5,7 @@ import { roundedPath } from "@/lib/geometry";
 import { SplitHeading } from "@/components/motion/SplitHeading";
 import { CtaFlood } from "@/components/motion/CtaFlood";
 import { SketchSolid } from "@/components/motion/SketchSolid";
+import { VenomString } from "@/components/motion/VenomString";
 import { Note } from "@/components/Note";
 
 /* The finale's drawing: the hero's seven steps again, now fully connected,
@@ -84,6 +85,7 @@ export function CtaBand({
           <Link href={site.primaryCta.href} className="btn btn-inverse">
             {site.ctaBand.button}
             <span className="btn-node" aria-hidden />
+            <VenomString reach={260} />
           </Link>
           <Note arrow="left" tone="sky" size="sm" className="cta-band__note">
             thirty minutes, that&apos;s all
