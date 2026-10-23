@@ -7,6 +7,7 @@ import {
 } from "@payloadcms/richtext-lexical/react";
 import type { CalloutBlock, CtaBlock, FaqBlock, Media, Post } from "@/payload-types";
 import { headingIds, textOf } from "@/lib/blog";
+import { VenomString } from "@/components/motion/VenomString";
 
 type NodeTypes = DefaultNodeTypes | SerializedBlockNode<CalloutBlock | FaqBlock | CtaBlock>;
 
@@ -146,6 +147,7 @@ export function RichText({ data }: { data: Post["content"] }) {
           <Link href={node.fields.href} className="btn btn-inverse">
             {node.fields.buttonLabel}
             <span className="btn-node" aria-hidden />
+            <VenomString />
           </Link>
         </aside>
       ),
