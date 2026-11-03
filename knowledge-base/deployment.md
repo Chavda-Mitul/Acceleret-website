@@ -38,7 +38,6 @@ For manual application rollback, an operator must inspect current.json and the m
 ## Known gotchas
 - CMS pages cache data during next build. A CI build containing test content must never be deployed as production output.
 - Migrations must remain backward-compatible with the previous live application during a release; app rollback cannot reverse database changes.
-- A production rebuild is required to change NEXT_PUBLIC_GA_ID.
 - LEADS_FILE=1 saves successful requests only to a private server file unless another delivery channel is configured. File delivery does not establish an email notification.
 - The first admin is provisioned privately from root-only admin.json before routing public requests. Its credential must be shared through a private channel.
 - Retaining all releases and backups consumes disk. The deploy command refuses to start with less than 6 GiB free. No cleanup is authorized by this workflow.

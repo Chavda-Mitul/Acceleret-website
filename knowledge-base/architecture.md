@@ -26,7 +26,7 @@ Public blog and case-study queries use Payload's local API with explicit publish
 The integrated CMS shares the application process. Production database migration and content seeding are explicit operations, separate from HTTP runtime. File delivery is a supported server-side contact channel when LEADS_FILE=1.
 
 ## External Dependencies
-PostgreSQL is required for builds and dynamic CMS routes. Resend/webhook are optional configured contact channels. Gmail SMTP is used only for admin email when SMTP_PASS exists. Next public analytics values require a rebuild to change.
+PostgreSQL is required for builds and dynamic CMS routes. Resend/webhook are optional configured contact channels. Gmail SMTP is used only for admin email when SMTP_PASS exists. Google Analytics (ID in the site layout) loads only in production builds outside CI.
 
 ## Scalability & Limits
 VPS1 also runs unrelated applications. Build workloads should run off-host. One site process and one isolated PostgreSQL database suffice for the current scope; uploaded media and caches must remain writable and persistent as appropriate.

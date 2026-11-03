@@ -43,6 +43,12 @@ export const metadata: Metadata = {
   verification: { google: "FKlhWlwQVmTzXiJIHHl9VDVAOhUvYUmLf8gH1lZadRw" },
 };
 
+/* Google Analytics 4 measurement ID. Like the token above it is public (every page sends it),
+   so it lives here rather than in the server's .env. <GoogleAnalytics> renders Google's
+   gtag.js snippet. `next dev` and CI (which sets CI=true) leave it out, so test runs
+   aren't counted as visits. */
+const gaId = process.env.NODE_ENV === "production" && !process.env.CI ? "G-2DC6HJSYCP" : null;
+
 export const viewport: Viewport = {
   themeColor: "#ffffff",
   width: "device-width",
@@ -79,7 +85,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <MotionProvider />
         <PencilLayer />
       </body>
-      {process.env.NEXT_PUBLIC_GA_ID ? <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} /> : null}
+      {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
     </html>
   );
 }
