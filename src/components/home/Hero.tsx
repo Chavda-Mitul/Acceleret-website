@@ -3,6 +3,7 @@ import { hero } from "@/content/home";
 import { site } from "@/content/site";
 import { HeroSystems } from "./HeroSystems";
 import { SplitHeading } from "@/components/motion/SplitHeading";
+import { VenomString } from "@/components/motion/VenomString";
 import { Note } from "@/components/Note";
 
 export function Hero() {
@@ -18,6 +19,7 @@ export function Hero() {
             <Link href={site.primaryCta.href} className="btn">
               {site.primaryCta.label}
               <span className="btn-node" aria-hidden />
+              <VenomString />
             </Link>
             <Link href={hero.secondaryCta.href} className="btn btn-ghost">
               {hero.secondaryCta.label}

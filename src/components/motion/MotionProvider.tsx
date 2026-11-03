@@ -70,6 +70,7 @@ function Motion() {
 
   // Buttons lean towards the pointer. The lean is CSS `translate` (via --mx/--my,
   // see base.css), so it stacks with the buttons' own transform for hover and press.
+  // Buttons with a venom string (data-venom) lean on their own, see VenomString.
   useEffect(() => {
     if (mode !== "full" || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
     let active: HTMLElement | null = null;
@@ -88,7 +89,7 @@ function Motion() {
       const el = (e.target as Element | null)?.closest<HTMLElement>(".btn, .wa-button, [data-magnetic]");
       if (el !== active) {
         release();
-        if (!el || el.getAttribute("aria-disabled") === "true") return;
+        if (!el || el.hasAttribute("data-venom") || el.getAttribute("aria-disabled") === "true") return;
         active = el;
         to = {
           x: gsapRef.quickTo(el, "--mx", { duration: 0.5, ease: "power3.out" }),

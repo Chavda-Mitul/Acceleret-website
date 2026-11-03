@@ -259,6 +259,22 @@ svg {
   transform: translateX(3px) scale(1.25);
 }
 
+/* The venom string (VenomString): drawn in the button's own colour, under its
+   label. z-index -1 stays inside the button, which `translate` above makes a
+   stacking context. Offset by the border so the drawing starts at the outer corner. */
+.btn .venom {
+  position: absolute;
+  z-index: -1;
+  left: -1.5px;
+  top: -1.5px;
+  width: 1px;
+  height: 1px;
+  overflow: visible;
+  pointer-events: none;
+  fill: var(--btn-bg);
+  transition: fill 0.25s var(--ease-out);
+}
+
 .btn-ghost {
   --btn-bg: transparent;
   --btn-fg: var(--ink);
