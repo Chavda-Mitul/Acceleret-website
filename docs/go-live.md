@@ -33,7 +33,6 @@ The full template is in deploy-vps.md, step 4. What matters:
 | `RESEND_API_KEY` + `LEADS_TO_EMAIL=support@acceleret.com` | yes | `src/lib/leads.ts` throws in production when no channel is set, so every visitor sees "didn't reach us". |
 | `LEADS_FILE=1` | recommended | A backup copy of each request in `~/site/.data/leads.jsonl`. |
 | `NEXT_PUBLIC_GA_ID` | later | Baked into the build: changing it needs `npm run build:prod`, not just a restart. |
-| `GOOGLE_SITE_VERIFICATION` | later | Search Console. |
 | `SMTP_PASS` | later | Only admin forgot-password emails use it; the user is the sole admin and chose to leave it empty. |
 
 ## 4. Deploy and first-hour steps
@@ -45,6 +44,8 @@ The full template is in deploy-vps.md, step 4. What matters:
 - [ ] Admin account created at /admin straight away. Until one exists, whoever opens /admin
       first can create it.
 - [ ] A test walkthrough request arrives at support@acceleret.com.
+- [ ] Search Console: once HTTPS works, press Verify on the `https://acceleret.com` property.
+      The HTML-tag token is already in `src/app/(site)/layout.tsx`.
 - [ ] Home, a case study, the blog and an unknown URL ("This page isn't on the map.")
       checked on phone and desktop.
 - [ ] Nightly backup cron set up, with `~/backups` copied off the server now and then.
