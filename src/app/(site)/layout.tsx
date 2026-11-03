@@ -38,10 +38,9 @@ export const metadata: Metadata = {
   openGraph: baseOpenGraph,
   twitter: { card: "summary_large_image" },
   formatDetection: { telephone: false },
-  // Google Search Console: set GOOGLE_SITE_VERIFICATION to the HTML-tag token.
-  verification: process.env.GOOGLE_SITE_VERIFICATION
-    ? { google: process.env.GOOGLE_SITE_VERIFICATION }
-    : undefined,
+  // Google Search Console HTML-tag token. It is public (served in every page's <head>),
+  // so it lives here rather than in the server's .env.
+  verification: { google: "FKlhWlwQVmTzXiJIHHl9VDVAOhUvYUmLf8gH1lZadRw" },
 };
 
 export const viewport: Viewport = {

@@ -35,7 +35,6 @@ The full template is in deploy-vps.md, step 4. What matters:
 | `RESEND_API_KEY` or `LEADS_WEBHOOK_URL` | for external notifications | Not configured. File delivery succeeds independently; no mailbox/provider delivery is claimed. |
 | `LEADS_FILE=1` | configured | A private persistent copy at `/opt/acceleret/shared/.data/leads.jsonl`; one labelled real browser submission was verified. |
 | `NEXT_PUBLIC_GA_ID` | later | Baked into the build: changing it needs `npm run build:prod`, not just a restart. |
-| `GOOGLE_SITE_VERIFICATION` | later | Search Console. |
 | `SMTP_PASS` | later | Only admin forgot-password emails use it; the user is the sole admin and chose to leave it empty. |
 
 ## 4. Deploy and first-hour steps

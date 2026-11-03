@@ -112,8 +112,6 @@ SMTP_USER=acceleret.official@gmail.com
 SMTP_PASS=
 # Google Analytics 4, e.g. G-XXXXXXXXXX
 NEXT_PUBLIC_GA_ID=
-# Google Search Console HTML-tag token
-GOOGLE_SITE_VERIFICATION=
 ```
 
 ```bash
