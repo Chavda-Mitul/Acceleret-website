@@ -110,16 +110,13 @@ LEADS_FILE=1
 # Admin password-reset emails (a Gmail App Password, not the account password)
 SMTP_USER=acceleret.official@gmail.com
 SMTP_PASS=
-# Google Analytics 4, e.g. G-XXXXXXXXXX
-NEXT_PUBLIC_GA_ID=
 ```
 
 ```bash
 chmod 600 ~/site/.env
 ```
 
-`NEXT_PUBLIC_GA_ID` is built into the pages, so changing it later needs a
-rebuild (step 5). The other settings only need a restart.
+Changing these settings later only needs a restart.
 
 ## 5. Build
 

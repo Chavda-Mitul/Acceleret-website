@@ -6,7 +6,7 @@ const isProd = process.env.NODE_ENV === "production";
 /**
  * Content Security Policy. Inline scripts are allowed because Next.js streams
  * inline bootstrapping scripts; everything else is locked to this origin plus
- * Google Analytics (only loaded when NEXT_PUBLIC_GA_ID is set).
+ * Google Analytics (src/app/(site)/layout.tsx).
  */
 const csp = [
   "default-src 'self'",

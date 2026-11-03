@@ -17,10 +17,10 @@ export const metadata: Metadata = {
  * is used only to respond, no sale of data, contact for deletion.
  * FOUNDER REVIEW: the wording below is a draft written by the developer.
  * Items marked "Confirm" depend on decisions not yet made (where submissions
- * are stored, whether analytics is switched on, retention period).
+ * are stored, retention period).
  */
 
-const UPDATED = "10 October 2026";
+const UPDATED = "3 November 2026";
 
 export default function PrivacyPage() {
   const email = site.contact.email;
@@ -67,11 +67,8 @@ export default function PrivacyPage() {
 
             <SplitHeading sketch>Analytics</SplitHeading>
             <p>
-              We may use Google Analytics to count visits and see which pages are useful. It records things like the
-              pages viewed and the type of device, not your name or contact details.{" "}
-              {site.showPending ? (
-                <span className="privacy__confirm">Confirm once analytics is switched on</span>
-              ) : null}
+              We use Google Analytics to count visits and see which pages are useful. It records things like the
+              pages viewed and the type of device, not your name or contact details.
             </p>
 
             <SplitHeading sketch>Your choices</SplitHeading>

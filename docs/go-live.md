@@ -34,7 +34,6 @@ The full template is in deploy-vps.md, step 4. What matters:
 | `DATABASE_URI` | yes | Blog and case studies; `npm run build:prod` migrates before it builds. |
 | `RESEND_API_KEY` or `LEADS_WEBHOOK_URL` | for external notifications | Not configured. File delivery succeeds independently; no mailbox/provider delivery is claimed. |
 | `LEADS_FILE=1` | configured | A private persistent copy at `/opt/acceleret/shared/.data/leads.jsonl`; one labelled real browser submission was verified. |
-| `NEXT_PUBLIC_GA_ID` | later | Baked into the build: changing it needs `npm run build:prod`, not just a restart. |
 | `SMTP_PASS` | later | Only admin forgot-password emails use it; the user is the sole admin and chose to leave it empty. |
 
 ## 4. Deploy and first-hour steps
@@ -46,6 +45,8 @@ The full template is in deploy-vps.md, step 4. What matters:
 - [x] Admin created privately before public routing; real login succeeds and unauthenticated
       user creation returns 403. Session cookie has Secure and HttpOnly.
 - [ ] A test walkthrough request arrives at support@acceleret.com.
+- [ ] Google Analytics: after the deploy that adds it, open the site and check the visit
+      shows in GA4 Realtime. The ID `G-2DC6HJSYCP` is in `src/app/(site)/layout.tsx`.
 - [x] Home, a case study, the blog and an unknown URL ("This page isn't on the map.")
       checked on phone and desktop.
 - [x] Nightly backup systemd timer active, saving private database/media/contact archives

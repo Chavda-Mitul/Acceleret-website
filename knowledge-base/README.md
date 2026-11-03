@@ -28,7 +28,6 @@
 - Preserve the database, `media/` and `.data/` across releases.
 - Production migrations must run before building against a database.
 - PAYLOAD_SECRET and DATABASE_URI are required during build and runtime.
-- NEXT_PUBLIC_GA_ID is compiled into the build.
 - The documented workflow has owners squash-merge PRs; production follows main.
 - Do not modify existing VPS1 applications as part of this deployment.
 
