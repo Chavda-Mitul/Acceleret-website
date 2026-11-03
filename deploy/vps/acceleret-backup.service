@@ -1,0 +1,11 @@
+[Unit]
+Description=Back up Acceleret CMS database, uploads and contact archive
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/acceleret-deploy backup
+Nice=10
+IOSchedulingClass=idle
+UMask=0077

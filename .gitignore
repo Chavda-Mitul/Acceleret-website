@@ -52,3 +52,6 @@ skills-lock.json
 
 # blog images uploaded through the CMS (src/collections/Media.ts)
 /media
+
+# Python deployment helper bytecode
+__pycache__/

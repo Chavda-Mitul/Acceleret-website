@@ -11,3 +11,11 @@ software fits how the business already runs.
 ## Built with
 
 Next.js, React, TypeScript, Tailwind CSS, GSAP, Payload CMS and PostgreSQL.
+
+## Development and deployment
+
+Read [knowledge-base/README.md](knowledge-base/README.md) for project conventions,
+[testing.md](knowledge-base/testing.md) for checks, and
+[deployment.md](knowledge-base/deployment.md) for the VPS1 release process.
+The [GitHub workflow](.github/workflows/ci-cd.yml) checks pull requests and deploys
+successful main commits through a restricted SSH command.
